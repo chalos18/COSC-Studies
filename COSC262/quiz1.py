@@ -75,5 +75,50 @@ def odds(data):
         return remaining
 
 
-result = odds([0, 1, 12, 13, 14, 9, -11, -20])
-print(result)
+# result = odds([0, 1, 12, 13, 14, 9, -11, -20])
+# print(result)
+
+
+def squares(data):
+    if len(data) == 0:
+        return []
+    else:
+        first = data[0]
+        remaining = squares(data[1:])
+        remaining.insert(0, first**2)
+        return remaining
+
+
+# result = squares([1, 13, 9, -11])
+# print(result)
+
+
+def find(data, value):
+    if len(data) == 0:
+        return None
+    else:
+        first = data[0]
+        remaining = find(data[1:], value)
+        if first == value:
+            remaining = 1
+        return remaining
+
+
+def find(data, value):
+    """Returns the subscript (position) of the first occurrence of value in data, or None if the value is not found"""
+    if not data:
+        return None
+    elif data[0] == value:
+        return 0
+    else:
+        found = find(data[1:], value)
+        if found is None:
+            return None
+        else:
+            return found + 1
+
+
+print(find(["hi", "there", "you", "there"], "there"))
+print(find([10, 20, 30], 0))
+print(find([10, 20, 30], 30))
+print(find(list(range(0, 51)), 49))
