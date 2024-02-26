@@ -118,7 +118,29 @@ def find(data, value):
             return found + 1
 
 
-print(find(["hi", "there", "you", "there"], "there"))
-print(find([10, 20, 30], 0))
-print(find([10, 20, 30], 30))
-print(find(list(range(0, 51)), 49))
+# print(find(["hi", "there", "you", "there"], "there"))
+# print(find([10, 20, 30], 0))
+# print(find([10, 20, 30], 30))
+# print(find(list(range(0, 51)), 49))
+
+# def almost_all(numbers):
+#     for x in numbers:
+#         return [sum(numbers) - x]
+
+
+def almost_all(numbers):
+    total_sum = sum(numbers)
+
+    # Initialize an empty list to store the results
+    result = []
+    # Iterate through each number in the list
+    for x in numbers:
+        # Subtract the current number from the total sum and append the result to the result list
+        result.append(total_sum - x)
+
+    # Return the result list
+    return result
+
+
+print(almost_all([1, 2, 3]))
+print(almost_all(list(range(10**5))))
