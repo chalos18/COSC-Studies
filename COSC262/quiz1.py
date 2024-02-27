@@ -142,5 +142,15 @@ def almost_all(numbers):
     return result
 
 
-print(almost_all([1, 2, 3]))
-print(almost_all(list(range(10**5))))
+def recursive_sum(data, start_index=0):
+    """The sum of the elements in the list data, starting
+    at the given start_index
+    """
+    if start_index >= len(data):
+        return 0
+    else:
+        return data[start_index] + recursive_sum(data, start_index + 1)
+
+
+# print(almost_all([1, 2, 3]))
+# print(almost_all(list(range(10**5))))
