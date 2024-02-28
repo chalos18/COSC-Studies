@@ -107,21 +107,84 @@ def my_enumerate(items, start_index=0):
 # print(ans)
 
 
-def num_rushes(slope_height, rush_height_gain, back_sliding):
+# First attempt
+def num_rushes(slope_height, rush_height_gain, back_sliding, counter=0):
+    # this base case is bad because what if the slope height is the same as the rush height gain, then it should count as one rush
+    # technically the slope height could also go below 0 according to the calculations made so this is a bad base case
     if slope_height == 0:
-        return 0
+        return 1
     else:
-        rushes = 0
-        if rushes == 0:
+        # counter adds unnecessary recursion depth, improve the base case instead
+        if counter == 0:
             leftover_height = slope_height - rush_height_gain
-            rushes+=1
+            return 1 + num_rushes(
+                slope_height=leftover_height,
+                rush_height_gain=rush_height_gain,
+                back_sliding=back_sliding,
+                counter=counter + 1,
+            )
         else:
+            # correct calculation but could be made in less steps
+            rush_slide = rush_height_gain - back_sliding
+            slope_height = slope_height - rush_slide
+            return 1 + num_rushes(
+                slope_height=slope_height,
+                rush_height_gain=rush_height_gain,
+                back_sliding=back_sliding,
+            )
 
 
-        rush = rush_height_gain - back_sliding
-        n_rushes = slope_height // rush
-        return n_rushes, rush
+# ans = num_rushes(100, 15, 7)
+# print(ans)
 
 
-ans = num_rushes(100, 10, 9)
+def num_rushes(slope_height, rush_height_gain, back_sliding):
+    if slope_height <= rush_height_gain:
+        return 1
+    else:
+        return 1 + num_rushes(
+            slope_height - rush_height_gain + back_sliding,
+            rush_height_gain,
+            back_sliding,
+        )
+
+
+# # Test cases
+# ans = num_rushes(10, 10, 9)
+# print(ans)  # Output: 1
+
+# ans = num_rushes(100, 10, 0)
+# print(ans)  # Output: 10
+
+# ans = num_rushes(100, 15, 7)
+# print(ans)
+
+
+# Num rushes with reduction
+def num_rushes(slope_height, rush_height_gain, back_sliding, reduction=0.95):
+    if slope_height <= rush_height_gain:
+        return 1
+    else:
+        # his first rush should not be affected by the deduction
+        return 1 + num_rushes(
+            slope_height - (rush_height_gain * reduction) + (back_sliding * reduction),
+            rush_height_gain,
+            back_sliding,
+            reduction=reduction * 0.95,
+        )
+
+
+# Reduction is tecnically correct with it decreasing each time
+
+ans = num_rushes(100, 15, 7)
+print(ans)
+
+ans = num_rushes(10, 10, 9)
+print(ans)
+
+
+ans = num_rushes(150, 20, 9)
+print(ans)
+
+ans = num_rushes(113, 11, 0)
 print(ans)
