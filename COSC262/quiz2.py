@@ -161,30 +161,189 @@ def num_rushes(slope_height, rush_height_gain, back_sliding):
 
 
 # Num rushes with reduction
+# def num_rushes(slope_height, rush_height_gain, back_sliding, reduction=0):
+#     if slope_height <= rush_height_gain:
+#         return 1
+#     else:
+#         if reduction == 0:
+#             return 1 + num_rushes(
+#                 slope_height - rush_height_gain + back_sliding,
+#                 rush_height_gain,
+#                 back_sliding,
+#                 reduction=reduction + 0.95,
+#             )
+#         else:
+#             if reduction <= 0.9025:
+#                 return 1 + num_rushes(
+#                     slope_height
+#                     - rush_height_gain * reduction
+#                     + back_sliding * reduction,
+#                     rush_height_gain,
+#                     back_sliding,
+#                     reduction=reduction,
+#                 )
+#             else:
+#                 return 1 + num_rushes(
+#                     slope_height
+#                     - rush_height_gain * reduction
+#                     + back_sliding * reduction,
+#                     rush_height_gain,
+#                     back_sliding,
+#                     reduction=reduction,
+#                 )
+
+
 def num_rushes(slope_height, rush_height_gain, back_sliding, reduction=0.95):
     if slope_height <= rush_height_gain:
         return 1
     else:
-        # his first rush should not be affected by the deduction
         return 1 + num_rushes(
-            slope_height - (rush_height_gain * reduction) + (back_sliding * reduction),
-            rush_height_gain,
-            back_sliding,
+            slope_height - rush_height_gain + back_sliding,
+            rush_height_gain * 0.95,
+            back_sliding * 0.95,
             reduction=reduction * 0.95,
         )
 
 
-# Reduction is tecnically correct with it decreasing each time
+# ans = num_rushes(100, 15, 7)
+# print(ans)
 
-ans = num_rushes(100, 15, 7)
-print(ans)
-
-ans = num_rushes(10, 10, 9)
-print(ans)
+# ans = num_rushes(10, 10, 9)
+# print(ans)
 
 
-ans = num_rushes(150, 20, 9)
-print(ans)
+# ans = num_rushes(150, 20, 9)
+# print(ans)
 
-ans = num_rushes(113, 11, 0)
-print(ans)
+# ans = num_rushes(113, 11, 0)
+# print(ans)
+
+
+NUM_RMDS = 9  # number of right-most digits required
+
+
+def multiply2by2(A, B):
+    """Takes two 2-by-2 matrices, A and B, and returns their product. The
+    product will only contain a limited number of digits to cope with
+    large numbers.  The input and output matrices are in the form of
+    lists of lists (of lengths 2). This function only works for 2-by-2
+    matrices. The size (dimensions) of the input does not grow with
+    respect to n in the original problem. Therefore the time
+    complexity of this function is Theta(1). This is different from
+    the general matrix multiplication problem where the time
+    complexity for multiplying two n-by-n matrices is O(n^3).
+
+    """
+
+    # compute the matrix product
+    product = [
+        [A[0][0] * B[0][0] + A[0][1] * B[1][0], A[0][0] * B[0][1] + A[0][1] * B[1][1]],
+        [A[1][0] * B[0][0] + A[1][1] * B[1][0], A[1][0] * B[0][1] + A[1][1] * B[1][1]],
+    ]
+
+    # retain only the required number of digits on the right
+    product = [[x % 10**NUM_RMDS for x in row] for row in product]
+
+    return product
+
+
+def matrix_power(A, n):
+    """Takes a 2x2 matrix A and a non-negative integer n as exponent and
+    returns A raised to the power of n (which will be a 2x2 matrix)."""
+
+    # if n is 0 then return the identity matrix.
+    if n == 0:
+        return [[1, 0], [0, 1]]
+    else:
+        p = matrix_power(A, n // 2)
+        if n % 2 == 0:
+            return multiply2by2(p, p)
+        else:
+            return multiply2by2(A, multiply2by2(p, p))
+
+
+def fib(n):
+    """Returns the n-th Fibonacci number by raising a special matrix to the
+    power of n and returning an element on the off-diagonal."""
+
+    A = [[1, 1], [1, 0]]
+
+    return matrix_power(A, n)[0][1]
+
+
+# print(fib(5))
+# print(fib(6))
+# print(fib(7))
+# print(fib(100))
+
+
+"""
+# Merge Sort pseudocode
+
+procedure Merge-Sort(A,l,r)
+if l<r
+    m  ← (l+r)/2
+    Merge-Sort(A,l,m)
+    Merge-Sort(A,m+1,r)
+    Merge(A,l,m,r)
+"""
+
+# Make the below, recursive
+# def all_pairs(list1, list2):
+#     tuples = []
+#     for list1_el in list1:
+#         for list2_el in list2:
+#             tuples.append((list1_el, list2_el))
+#     return tuples
+
+
+def all_pairs_inner(list2, start_index=0):
+    if start_index >= len(list2):
+        return []
+    else:
+        iterator = list2[start_index]
+        remaining = all_pairs_inner(list2, start_index + 1)
+        return [iterator] + remaining
+        # return [iterator].append(all_pairs_inner(list2, start_index + 1))
+
+
+# print(all_pairs_inner([10, 20, 30]))
+
+
+def all_pairs(list1, list2, start_index = 0):
+    # if start_index >= len(list1):
+    #     return []
+    # else:
+    #     iterator = list1[start_index]
+    #     remaining = all_pairs_inner(list1, start_index + 1)
+    pairs = []
+    for list1_el in list1:
+        list2_pairs = all_pairs_inner(list2)
+        for pair in list2_pairs:
+            pairs.append((list1_el, pair))
+    return pairs
+
+
+# print(all_pairs([1, 2], [10, 20, 30]))
+
+
+def generate_pairs_for_element(list1_el, list2):
+    if not list2:
+        return []
+    else:
+        pair = (list1_el, list2[0])
+        remaining_pairs = generate_pairs_for_element(list1_el, list2[1:])
+        return [pair] + remaining_pairs
+
+
+def all_pairs(list1, list2):
+    if not list1:
+        return []
+    else:
+        list1_el = list1[0]
+        pairs_with_list1_el = generate_pairs_for_element(list1_el, list2)
+        remaining_pairs = all_pairs(list1[1:], list2)
+        return pairs_with_list1_el + remaining_pairs
+
+# Test the function
+# print(all_pairs([1, 2], [10, 20, 30]))
