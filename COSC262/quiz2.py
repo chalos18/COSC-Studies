@@ -347,3 +347,28 @@ def all_pairs(list1, list2):
 
 # Test the function
 # print(all_pairs([1, 2], [10, 20, 30]))
+
+
+# Much better implementation of the above - I did it!
+
+def all_pairs_inner(list1_el, list2, start_index=0):
+    if start_index >= len(list2):
+        return []
+    else:
+        iterator = list2[start_index]
+        return [(list1_el, iterator)] + all_pairs_inner(
+            list1_el, list2, start_index + 1
+        )
+
+
+def all_pairs(list1, list2, start_index=0):
+    if start_index >= len(list1):
+        return []
+    else:
+        iterator = list1[start_index]
+        return (all_pairs_inner(iterator, list2)) + all_pairs(
+            list1, list2, start_index + 1
+        )
+
+# Test the function
+# print(all_pairs([1, 2], [10, 20, 30]))
