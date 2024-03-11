@@ -1,4 +1,5 @@
 from pprint import pprint
+from collections import deque
 
 
 def undirected_list(u_list, edges, weighted=False):
@@ -229,3 +230,117 @@ U 17
 """
 
 # result = pprint(adjacency_matrix(graph_string))
+
+
+def bfs_loop(adj_list, Q, state, parent):
+    while len(Q) != 0:
+        u = deque.popleft(Q)
+        for v in adj_list[u]:
+            v=v[0]
+            if state[v] == "U":
+                state[v] = "D"
+                parent[v] = u
+                Q.append(v)
+        state[u] = "P"
+    return parent
+
+
+def bfs_tree(adj_list, start_index):
+    """
+    performs BFS and returns the parent array at the end of the search
+    the elements of the parent array must be inialised to None at the beggining of the search
+    """
+    # n of vertices
+    n = len(adj_list)
+
+    state = ["U" for _ in range(n)]
+    parent = [None for _ in range(n)]
+
+    Q = deque([])
+    state[start_index] = "D"
+    Q.append(start_index)
+    # print(Q)
+
+    return bfs_loop(adj_list, Q, state, parent)
+
+
+# an undirected graph
+# adj_list = [[(1, None)], [(0, None), (2, None)], [(1, None)]]
+
+# print(bfs_tree(adj_list, 0))
+# print(bfs_tree(adj_list, 1))
+
+
+# a directed graph (note the asymmetrical adjacency list)
+
+# adj_list = [[(1, None)], []]
+
+# print(bfs_tree(adj_list, 0))
+# print(bfs_tree(adj_list, 1))
+
+
+# graph_string = """\
+# D 2
+# 0 1
+# """
+
+# print(bfs_tree(adjacency_list(graph_string), 0))
+
+
+# graph_string = """\
+# D 2
+# 0 1
+# 1 0
+# """
+
+# print(bfs_tree(adjacency_list(graph_string), 1))
+
+
+# graph from the textbook example
+# graph_string = """\
+# U 7
+# 1 2
+# 1 5
+# 1 6
+# 2 3
+# 2 5
+# 3 4
+# 4 5
+# """
+
+# print(bfs_tree(adjacency_list(graph_string), 1))
+
+
+# graph_string = """\
+# D 2 W
+# 0 1 99
+# """
+
+# print(bfs_tree(adjacency_list(graph_string), 0))
+
+def dfs_loop(adj_list, u, state, parent):
+    for v in adj_list[u]:
+        v=v[0]
+        if state[v]=="U":
+            state[v]="D"
+            parent[v]=u
+            dfs_loop(adj_list,v,state,parent)
+    state[u]="P"
+
+
+def dfs_tree(adj_list, start):
+    n = len(adj_list)
+    state=["U" for _ in range(n)]
+    parent=[None for _ in range(n)]
+    state[start]="D"
+    dfs_loop(adj_list, start, state, parent)
+
+    return parent
+
+# an undirected graph
+
+# adj_list = [[(1, None), (2, None)], [(0, None), (2, None)], [(0, None), (1, None)]]
+
+# print(dfs_tree(adj_list, 0))
+# print(dfs_tree(adj_list, 1))
+# print(dfs_tree(adj_list, 2))
