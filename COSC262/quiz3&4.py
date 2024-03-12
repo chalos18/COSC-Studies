@@ -350,6 +350,10 @@ def dfs_tree(adj_list, start):
 
 
 def transpose(adj_list):
+    """
+    The tranpose of a graph is one where every edge points to the opposite direction - for directed graphs
+    For undirected graphs the output will be the same as input.
+    """
     pass
 
 
