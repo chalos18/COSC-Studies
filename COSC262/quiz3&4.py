@@ -56,7 +56,7 @@ def adjacency_list(graph_string):
     else:
         result = directed_adjacency_list(lines, edges, weighted)
 
-    return result
+    return result, direction
 
 
 graph_string = """\
@@ -260,9 +260,8 @@ def bfs_tree(adj_list, start_index):
     Q = deque([])
     state[start_index] = "D"
     Q.append(start_index)
-    # print(Q)
 
-    return bfs_loop(adj_list, Q, state, parent)
+    return bfs_loop(adj_list, Q, state, parent), state
 
 
 # an undirected graph
@@ -349,72 +348,173 @@ def dfs_tree(adj_list, start):
 # print(dfs_tree(adj_list, 2))
 
 
+# def adjacency_list():
+#     pass
+
+
 def transpose(adj_list):
     """
     The tranpose of a graph is one where every edge points to the opposite direction - for directed graphs
     For undirected graphs the output will be the same as input.
     """
-    pass
+    direction = adj_list[1]
+    adjacency_list = adj_list[0]
+    new_list = [[] for _ in range(len(adjacency_list))]
+    if direction == "U":
+        return adjacency_list
+    else:
+        index = 0
+        for i_list in adjacency_list:
+            # list_index = adjacency_list.index(i_list)
+            for i_tuple in i_list:
+                vert = i_tuple[0]
+                new_tuple = (index, i_tuple[1])
+                new_list[vert].append(new_tuple)
+            index += 1
+    return new_list
 
 
-graph_string = """\
-D 3
-0 1
-1 0
-0 2
-"""
+# graph_string = """\
+# D 7
+# 1 6
+# 1 2
+# 1 5
+# 2 5
+# 2 3
+# 5 4
+# 3 4
+# """
 
-graph_adj_list = adjacency_list(graph_string)
-graph_transposed_adj_list = transpose(graph_adj_list)
-for i in range(len(graph_transposed_adj_list)):
-    print(i, sorted(graph_transposed_adj_list[i]))
+# graph_adj_list = adjacency_list(graph_string)
+# graph_transposed_adj_list = transpose(graph_adj_list)
+# for i in range(len(graph_transposed_adj_list)):
+#     print(i, sorted(graph_transposed_adj_list[i]))
+
+# graph_string = """\
+# D 3
+# 0 1
+# 1 0
+# 0 2
+# """
+
+# graph_adj_list = adjacency_list(graph_string)
+# graph_transposed_adj_list = transpose(graph_adj_list)
+# for i in range(len(graph_transposed_adj_list)):
+#     print(i, sorted(graph_transposed_adj_list[i]))
 
 
-graph_string = """\
-D 3 W
-0 1 7
-1 0 -2
-0 2 0
-"""
+# graph_string = """\
+# D 3 W
+# 0 1 7
+# 1 0 -2
+# 0 2 0
+# """
 
-graph_adj_list = adjacency_list(graph_string)
-graph_transposed_adj_list = transpose(graph_adj_list)
-for i in range(len(graph_transposed_adj_list)):
-    print(i, sorted(graph_transposed_adj_list[i]))
+# graph_adj_list = adjacency_list(graph_string)
+# graph_transposed_adj_list = transpose(graph_adj_list)
+# for i in range(len(graph_transposed_adj_list)):
+#     print(i, sorted(graph_transposed_adj_list[i]))
 
 
 # It should also work undirected graphs.
 # The output will be the same as input.
 
+# graph_string = """\
+# U 7
+# 1 2
+# 1 5
+# 1 6
+# 2 3
+# 2 5
+# 3 4
+# 4 5
+# """
+
+# graph_adj_list = adjacency_list(graph_string)
+# print(graph_adj_list)
+# graph_transposed_adj_list = transpose(graph_adj_list)
+# for i in range(len(graph_transposed_adj_list)):
+#     print(i, sorted(graph_transposed_adj_list[i]))
+
+
+# graph_string = """\
+# U 17
+# 1 2
+# 1 15
+# 1 6
+# 12 13
+# 2 15
+# 13 4
+# 4 5
+# """
+
+# graph_adj_list = adjacency_list(graph_string)
+# graph_transposed_adj_list = transpose(graph_adj_list)
+# for i in range(len(graph_transposed_adj_list)):
+#     print(i, sorted(graph_transposed_adj_list[i]))
+
+
+def is_strongly_connected(adj_list):
+    """
+    Takes the adjacency list of a graph which has at least one vertex
+    and returns true if the graph is strongly connected, false otherwise
+    """
+    adjacency_list, _ = adj_list[0], adj_list[1]
+
+    #  Bfs tree starting on vertex 0
+    len_adjacency_list = len(adjacency_list)
+    for i in range(len_adjacency_list):
+        _, state = bfs_tree(adjacency_list, i)
+        if "U" in state:
+            return False
+        else:
+            tranpose_list = transpose(adj_list)
+            _, state = bfs_tree(tranpose_list, i)
+            if "U" in state:
+                return False
+    return True
+
+
+# graph_string = """\
+# D 3
+# 0 1
+# 1 0
+# 0 2
+# """
+# b, direction = adjacency_list(graph_string)
+# # print(b)
+# print(is_strongly_connected(adjacency_list(graph_string)))
+
+# graph_string = """\
+# D 3
+# 0 1
+# 1 2
+# 2 0
+# """
+
+# print(is_strongly_connected(adjacency_list(graph_string)))
+
+
+# graph_string = """\
+# D 4
+# 0 1
+# 1 2
+# 2 0
+# """
+
+# print(is_strongly_connected(adjacency_list(graph_string)))
+
+
+# Since we are passing an adjacency list to your algorithm,
+# it will see an un directed graph as a directed one where each
+# undirected edge appears as two directed edges.
+
 graph_string = """\
-U 7
-1 2
-1 5
-1 6
-2 3
-2 5
-3 4
-4 5
+U 5
+2 4
+3 1
+0 4
+2 1
 """
 
-graph_adj_list = adjacency_list(graph_string)
-graph_transposed_adj_list = transpose(graph_adj_list)
-for i in range(len(graph_transposed_adj_list)):
-    print(i, sorted(graph_transposed_adj_list[i]))
-
-
-graph_string = """\
-U 17
-1 2
-1 15
-1 6
-12 13
-2 15
-13 4
-4 5
-"""
-
-graph_adj_list = adjacency_list(graph_string)
-graph_transposed_adj_list = transpose(graph_adj_list)
-for i in range(len(graph_transposed_adj_list)):
-    print(i, sorted(graph_transposed_adj_list[i]))
+print(is_strongly_connected(adjacency_list(graph_string)))
