@@ -1,0 +1,363 @@
+from algorithms import *
+
+# Adjacency list
+
+graph_string = """\
+D 3
+0 1
+1 0
+0 2
+"""
+# print(adjacency_list(graph_string))
+
+graph_string = """\
+D 3 W
+0 1 7
+1 0 -2
+0 2 0
+"""
+# print(adjacency_list(graph_string))
+
+# undirected graph in the textbook example
+graph_string = """\
+U 7
+1 2
+1 5
+1 6
+2 3
+2 5
+3 4
+4 5
+"""
+
+# pprint(adjacency_list(graph_string))
+
+graph_string = """\
+U 17
+1 2
+1 15
+1 6
+12 13
+2 15
+13 4
+4 5
+"""
+
+# pprint(adjacency_list(graph_string))
+
+graph_string = """\
+U 17 W
+1 2 3
+1 15 5
+1 6 4
+12 13 2
+2 15 6
+13 4 7
+4 5 8
+"""
+
+# pprint(adjacency_list(graph_string))
+
+# Adjacency_matrix
+graph_string = """\
+D 3
+0 1
+1 0
+0 2
+"""
+
+# print(adjacency_matrix(graph_string))
+
+graph_string = """\
+D 3 W
+0 1 7
+1 0 -2
+0 2 0
+"""
+# print(adjacency_matrix(graph_string))
+
+graph_string = """\
+U 7
+1 2
+1 5
+1 6
+3 4
+0 4
+4 5
+"""
+
+# pprint(adjacency_matrix(graph_string))
+
+graph_string = """\
+U 17
+1 2
+1 15
+1 6
+12 13
+2 15
+13 4
+4 5
+"""
+
+# result = pprint(adjacency_matrix(graph_string))
+
+#  BFS tree
+# an undirected graph
+# adj_list = [[(1, None)], [(0, None), (2, None)], [(1, None)]]
+
+# print(bfs_tree(adj_list, 0))
+# print(bfs_tree(adj_list, 1))
+
+
+# a directed graph (note the asymmetrical adjacency list)
+
+# adj_list = [[(1, None)], []]
+
+# print(bfs_tree(adj_list, 0))
+# print(bfs_tree(adj_list, 1))
+
+
+# graph_string = """\
+# D 2
+# 0 1
+# """
+
+# print(bfs_tree(adjacency_list(graph_string), 0))
+
+
+# graph_string = """\
+# D 2
+# 0 1
+# 1 0
+# """
+
+# print(bfs_tree(adjacency_list(graph_string), 1))
+
+
+# graph from the textbook example
+# graph_string = """\
+# U 7
+# 1 2
+# 1 5
+# 1 6
+# 2 3
+# 2 5
+# 3 4
+# 4 5
+# """
+
+# print(bfs_tree(adjacency_list(graph_string), 1))
+
+
+# graph_string = """\
+# D 2 W
+# 0 1 99
+# """
+
+# print(bfs_tree(adjacency_list(graph_string), 0))
+
+
+# an undirected graph
+
+# adj_list = [[(1, None), (2, None)], [(0, None), (2, None)], [(0, None), (1, None)]]
+
+# print(dfs_tree(adj_list, 0))
+# print(dfs_tree(adj_list, 1))
+# print(dfs_tree(adj_list, 2))
+
+
+# Transpose
+# graph_string = """\
+# D 7
+# 1 6
+# 1 2
+# 1 5
+# 2 5
+# 2 3
+# 5 4
+# 3 4
+# """
+
+# graph_adj_list = adjacency_list(graph_string)
+# graph_transposed_adj_list = transpose(graph_adj_list)
+# for i in range(len(graph_transposed_adj_list)):
+#     print(i, sorted(graph_transposed_adj_list[i]))
+
+# graph_string = """\
+# D 3
+# 0 1
+# 1 0
+# 0 2
+# """
+
+# graph_adj_list = adjacency_list(graph_string)
+# graph_transposed_adj_list = transpose(graph_adj_list)
+# for i in range(len(graph_transposed_adj_list)):
+#     print(i, sorted(graph_transposed_adj_list[i]))
+
+
+# graph_string = """\
+# D 3 W
+# 0 1 7
+# 1 0 -2
+# 0 2 0
+# """
+
+# graph_adj_list = adjacency_list(graph_string)
+# graph_transposed_adj_list = transpose(graph_adj_list)
+# for i in range(len(graph_transposed_adj_list)):
+#     print(i, sorted(graph_transposed_adj_list[i]))
+
+
+# It should also work undirected graphs.
+# The output will be the same as input.
+
+# graph_string = """\
+# U 7
+# 1 2
+# 1 5
+# 1 6
+# 2 3
+# 2 5
+# 3 4
+# 4 5
+# """
+
+# graph_adj_list = adjacency_list(graph_string)
+# print(graph_adj_list)
+# graph_transposed_adj_list = transpose(graph_adj_list)
+# for i in range(len(graph_transposed_adj_list)):
+#     print(i, sorted(graph_transposed_adj_list[i]))
+
+
+# graph_string = """\
+# U 17
+# 1 2
+# 1 15
+# 1 6
+# 12 13
+# 2 15
+# 13 4
+# 4 5
+# """
+
+# graph_adj_list = adjacency_list(graph_string)
+# graph_transposed_adj_list = transpose(graph_adj_list)
+# for i in range(len(graph_transposed_adj_list)):
+#     print(i, sorted(graph_transposed_adj_list[i]))
+
+
+# # Strongly connected
+# graph_string = """\
+# D 3
+# 0 1
+# 1 0
+# 0 2
+# """
+# b, direction = adjacency_list(graph_string)
+# print(b)
+# print(is_strongly_connected(adjacency_list(graph_string)))
+
+# graph_string = """\
+# D 3
+# 0 1
+# 1 2
+# 2 0
+# """
+
+# print(is_strongly_connected(adjacency_list(graph_string)))
+
+
+# graph_string = """\
+# D 4
+# 0 1
+# 1 2
+# 2 0
+# """
+
+# print(is_strongly_connected(adjacency_list(graph_string)))
+
+
+# Since we are passing an adjacency list to your algorithm,
+# it will see an un directed graph as a directed one where each
+# undirected edge appears as two directed edges.
+
+graph_string = """\
+U 5
+2 4
+3 1
+0 4
+2 1
+"""
+
+# print(is_strongly_connected(adjacency_list(graph_string)))
+
+
+# Next vertex
+
+# failing edge case
+# in_tree = [True, False, False, True]
+# distance = [3, 5, 3, 0]
+# print(next_vertex(in_tree, distance))
+
+# failing edge case - not failing
+# in_tree = [True, True, True, False, True]
+# distance = [math.inf, 0, math.inf, math.inf, math.inf]
+# print(next_vertex(in_tree, distance))
+
+# in_tree = [False, True, True, False, False]
+# distance = [math.inf, 0, 3, 12, 5]
+# print(next_vertex(in_tree, distance))
+
+
+# in_tree = [False, False, False]
+# distance = [math.inf, 0, math.inf]
+# print(next_vertex(in_tree, distance))
+
+
+# in_tree = [False, True, False, False]
+# distance = [math.inf, 0, math.inf, 1_000_000]
+# print(next_vertex(in_tree, distance))
+
+
+# in_tree = [True, True, True, False, True]
+# distance = [math.inf, 0, math.inf, math.inf, math.inf]
+# print(next_vertex(in_tree, distance))
+
+# in_tree = [False, True, True, False, False]
+# distance = [math.inf, 0, 3, 12, 5]
+# print(next_vertex(in_tree, distance))
+
+# in_tree = [False, True, True, False, False, True, False]
+# distance = [0, 5, 7, 4, 2, 3, 2]
+# print(next_vertex(in_tree, distance))
+
+
+# in_tree = [True, False, False, False, False, False, False]
+# distance = [0, 5, 7, 12, math.inf, math.inf, math.inf]
+# print(next_vertex(in_tree, distance))
+
+
+# Dijkstra
+# graph_string = """\
+# D 3 W
+# 1 0 3
+# 2 0 1
+# 1 2 1
+# """
+
+# dijkstra(adjacency_list(graph_string), 1)
+
+# print(dijkstra(adjacency_list(graph_string), 1))
+# print(dijkstra(adjacency_list(graph_string), 2))
+
+
+# graph_string = """\
+# U 4 W
+# 0 2 5
+# 0 3 2
+# 3 2 2
+# """
+
+# print(dijkstra(adjacency_list(graph_string), 0))
+# print(dijkstra(adjacency_list(graph_string), 2))

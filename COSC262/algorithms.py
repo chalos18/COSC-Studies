@@ -1,5 +1,6 @@
 from pprint import pprint
 from collections import deque
+import math
 
 
 def undirected_adjaceny_list(u_list, edges, weighted=False):
@@ -57,63 +58,6 @@ def adjacency_list(graph_string):
         result = directed_adjacency_list(lines, edges, weighted)
 
     return result, direction
-
-
-graph_string = """\
-D 3
-0 1
-1 0
-0 2
-"""
-# print(adjacency_list(graph_string))
-
-graph_string = """\
-D 3 W
-0 1 7
-1 0 -2
-0 2 0
-"""
-# print(adjacency_list(graph_string))
-
-# undirected graph in the textbook example
-graph_string = """\
-U 7
-1 2
-1 5
-1 6
-2 3
-2 5
-3 4
-4 5
-"""
-
-# pprint(adjacency_list(graph_string))
-
-graph_string = """\
-U 17
-1 2
-1 15
-1 6
-12 13
-2 15
-13 4
-4 5
-"""
-
-# pprint(adjacency_list(graph_string))
-
-graph_string = """\
-U 17 W
-1 2 3
-1 15 5
-1 6 4
-12 13 2
-2 15 6
-13 4 7
-4 5 8
-"""
-
-# pprint(adjacency_list(graph_string))
 
 
 def undirected_adjacency_matrix(u_list, edges, num_vertices, weighted=False):
@@ -190,49 +134,6 @@ def adjacency_matrix(graph_string):
     return result
 
 
-graph_string = """\
-D 3
-0 1
-1 0
-0 2
-"""
-
-# print(adjacency_matrix(graph_string))
-
-graph_string = """\
-D 3 W
-0 1 7
-1 0 -2
-0 2 0
-"""
-# print(adjacency_matrix(graph_string))
-
-graph_string = """\
-U 7
-1 2
-1 5
-1 6
-3 4
-0 4
-4 5
-"""
-
-# pprint(adjacency_matrix(graph_string))
-
-graph_string = """\
-U 17
-1 2
-1 15
-1 6
-12 13
-2 15
-13 4
-4 5
-"""
-
-# result = pprint(adjacency_matrix(graph_string))
-
-
 def bfs_loop(adj_list, Q, state, parent):
     while len(Q) != 0:
         u = deque.popleft(Q)
@@ -264,61 +165,6 @@ def bfs_tree(adj_list, start_index):
     return bfs_loop(adj_list, Q, state, parent), state
 
 
-# an undirected graph
-# adj_list = [[(1, None)], [(0, None), (2, None)], [(1, None)]]
-
-# print(bfs_tree(adj_list, 0))
-# print(bfs_tree(adj_list, 1))
-
-
-# a directed graph (note the asymmetrical adjacency list)
-
-# adj_list = [[(1, None)], []]
-
-# print(bfs_tree(adj_list, 0))
-# print(bfs_tree(adj_list, 1))
-
-
-# graph_string = """\
-# D 2
-# 0 1
-# """
-
-# print(bfs_tree(adjacency_list(graph_string), 0))
-
-
-# graph_string = """\
-# D 2
-# 0 1
-# 1 0
-# """
-
-# print(bfs_tree(adjacency_list(graph_string), 1))
-
-
-# graph from the textbook example
-# graph_string = """\
-# U 7
-# 1 2
-# 1 5
-# 1 6
-# 2 3
-# 2 5
-# 3 4
-# 4 5
-# """
-
-# print(bfs_tree(adjacency_list(graph_string), 1))
-
-
-# graph_string = """\
-# D 2 W
-# 0 1 99
-# """
-
-# print(bfs_tree(adjacency_list(graph_string), 0))
-
-
 def dfs_loop(adj_list, u, state, parent):
     for v in adj_list[u]:
         v = v[0]
@@ -337,20 +183,6 @@ def dfs_tree(adj_list, start):
     dfs_loop(adj_list, start, state, parent)
 
     return parent
-
-
-# an undirected graph
-
-# adj_list = [[(1, None), (2, None)], [(0, None), (2, None)], [(0, None), (1, None)]]
-
-# print(dfs_tree(adj_list, 0))
-# print(dfs_tree(adj_list, 1))
-# print(dfs_tree(adj_list, 2))
-
-
-# def adjacency_list():
-#     pass
-
 
 def transpose(adj_list):
     """
@@ -374,86 +206,6 @@ def transpose(adj_list):
     return new_list
 
 
-# graph_string = """\
-# D 7
-# 1 6
-# 1 2
-# 1 5
-# 2 5
-# 2 3
-# 5 4
-# 3 4
-# """
-
-# graph_adj_list = adjacency_list(graph_string)
-# graph_transposed_adj_list = transpose(graph_adj_list)
-# for i in range(len(graph_transposed_adj_list)):
-#     print(i, sorted(graph_transposed_adj_list[i]))
-
-# graph_string = """\
-# D 3
-# 0 1
-# 1 0
-# 0 2
-# """
-
-# graph_adj_list = adjacency_list(graph_string)
-# graph_transposed_adj_list = transpose(graph_adj_list)
-# for i in range(len(graph_transposed_adj_list)):
-#     print(i, sorted(graph_transposed_adj_list[i]))
-
-
-# graph_string = """\
-# D 3 W
-# 0 1 7
-# 1 0 -2
-# 0 2 0
-# """
-
-# graph_adj_list = adjacency_list(graph_string)
-# graph_transposed_adj_list = transpose(graph_adj_list)
-# for i in range(len(graph_transposed_adj_list)):
-#     print(i, sorted(graph_transposed_adj_list[i]))
-
-
-# It should also work undirected graphs.
-# The output will be the same as input.
-
-# graph_string = """\
-# U 7
-# 1 2
-# 1 5
-# 1 6
-# 2 3
-# 2 5
-# 3 4
-# 4 5
-# """
-
-# graph_adj_list = adjacency_list(graph_string)
-# print(graph_adj_list)
-# graph_transposed_adj_list = transpose(graph_adj_list)
-# for i in range(len(graph_transposed_adj_list)):
-#     print(i, sorted(graph_transposed_adj_list[i]))
-
-
-# graph_string = """\
-# U 17
-# 1 2
-# 1 15
-# 1 6
-# 12 13
-# 2 15
-# 13 4
-# 4 5
-# """
-
-# graph_adj_list = adjacency_list(graph_string)
-# graph_transposed_adj_list = transpose(graph_adj_list)
-# for i in range(len(graph_transposed_adj_list)):
-#     print(i, sorted(graph_transposed_adj_list[i]))
-
-
 def is_strongly_connected(adj_list):
     """
     Takes the adjacency list of a graph which has at least one vertex
@@ -475,46 +227,41 @@ def is_strongly_connected(adj_list):
     return True
 
 
-# graph_string = """\
-# D 3
-# 0 1
-# 1 0
-# 0 2
-# """
-# b, direction = adjacency_list(graph_string)
-# # print(b)
-# print(is_strongly_connected(adjacency_list(graph_string)))
 
-# graph_string = """\
-# D 3
-# 0 1
-# 1 2
-# 2 0
-# """
+def next_vertex(in_tree, distance):
+    min_distance = float("inf")
+    min_vertex = None
 
-# print(is_strongly_connected(adjacency_list(graph_string)))
+    for i, dist in enumerate(distance):
+        if not in_tree[i]:
+            if dist < min_distance:
+                min_distance = dist
+                min_vertex = i
+            elif min_vertex is None:
+                min_vertex = i
+
+    return min_vertex
 
 
-# graph_string = """\
-# D 4
-# 0 1
-# 1 2
-# 2 0
-# """
+def dijkstra(adj_list, start):
+    """
+    Takes the adjacency list of a weighted (D or U) graph
+    Then runs Dijkstra's shortest path algorithm starting from vertex start
+    Then returns a par (parent, distance) that contains the parent and distance arrays
+    """
+    adjacency_list, _ = adj_list[0], adj_list[1]
+    n = len(adjacency_list)
+    in_tree = [False for _ in range(n)]
+    distance = [math.inf for _ in range(n)]
+    parent = [None for _ in range(n)]
+    distance[start] = 0
 
-# print(is_strongly_connected(adjacency_list(graph_string)))
+    while not all(in_tree):
+        u = next_vertex(in_tree, distance)
+        in_tree[u] = True
+        for v, weight in adjacency_list[u]:
+            if not in_tree[v] and distance[u] + weight < distance[v]:
+                distance[v] = distance[u] + weight
+                parent[v] = u
 
-
-# Since we are passing an adjacency list to your algorithm,
-# it will see an un directed graph as a directed one where each
-# undirected edge appears as two directed edges.
-
-graph_string = """\
-U 5
-2 4
-3 1
-0 4
-2 1
-"""
-
-print(is_strongly_connected(adjacency_list(graph_string)))
+    return parent, distance

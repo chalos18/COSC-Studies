@@ -1,5 +1,5 @@
-import math
-
+from algorithms import *
+from tests import *
 
 def undirected_adjaceny_list(u_list, edges, weighted=False):
     if weighted == True:
@@ -57,42 +57,10 @@ def adjacency_list(graph_string):
 
     return result, direction
 
-
-def next_vertex(in_tree, distance):
-    min_distance = float("inf")
-    min_vertex = None
-
-    for i, dist in enumerate(distance):
-        if not in_tree[i]:
-            if dist < min_distance:
-                min_distance = dist
-                min_vertex = i
-            elif min_vertex is None:
-                min_vertex = i
-
-    return min_vertex
-
-
-def dijkstra(adj_list, start):
-    """
-    Takes the adjacency list of a weighted (D or U) graph
-    Then runs Dijkstra's shortest path algorithm starting from vertex start
-    Then returns a par (parent, distance) that contains the parent and distance arrays
-    """
-    adjacency_list, _ = adj_list[0], adj_list[1]
-    n = len(adjacency_list)
-    in_tree = [False for _ in range(n)]
-    distance = [math.inf for _ in range(n)]
-    parent = [None for _ in range(n)]
-    distance[start] = 0
-
-    while not all(in_tree):
-        u = next_vertex(in_tree, distance)
-        in_tree[u] = True
-        for v, weight in adjacency_list[u]:
-            if not in_tree[v] and distance[u] + weight < distance[v]:
-                distance[v] = distance[u] + weight
-                parent[v] = u
-
-    return parent, distance
-
+graph_string = """\
+D 3
+0 1
+1 0
+0 2
+"""
+print(adjacency_list(graph_string))
