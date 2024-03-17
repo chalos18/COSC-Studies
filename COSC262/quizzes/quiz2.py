@@ -310,7 +310,7 @@ def all_pairs_inner(list2, start_index=0):
 # print(all_pairs_inner([10, 20, 30]))
 
 
-def all_pairs(list1, list2, start_index = 0):
+def all_pairs(list1, list2, start_index=0):
     # if start_index >= len(list1):
     #     return []
     # else:
@@ -345,11 +345,13 @@ def all_pairs(list1, list2):
         remaining_pairs = all_pairs(list1[1:], list2)
         return pairs_with_list1_el + remaining_pairs
 
+
 # Test the function
 # print(all_pairs([1, 2], [10, 20, 30]))
 
 
 # Much better implementation of the above - I did it!
+
 
 def all_pairs_inner(list1_el, list2, start_index=0):
     if start_index >= len(list2):
@@ -370,5 +372,106 @@ def all_pairs(list1, list2, start_index=0):
             list1, list2, start_index + 1
         )
 
-# Test the function
-# print(all_pairs([1, 2], [10, 20, 30]))
+
+def all_pairs_inner_shuffle(list1_el, list2, start_index=0):
+    if start_index >= len(list2):
+        return []
+    else:
+        # iterator = list1[start_index]
+        iterator = list2[start_index]
+        for word in list2:
+            for letter in word:
+                iterator = letter
+        return [(list1_el, iterator)] + all_pairs_inner_shuffle(
+            list1_el, list2, start_index + 1
+        )
+
+
+def all_pairs_shuffle(list1, list2, start_index=0):
+    if start_index >= len(list1):
+        return []
+    else:
+        # iterator = list1[start_index]
+        iterator = list2[start_index]
+        for word in list1:
+            for letter in word:
+                iterator = letter
+                # print(iterator)
+        return (all_pairs_inner_shuffle(iterator, list2)) + all_pairs_shuffle(
+            list1, list2, start_index + 1
+        )
+
+
+def shuffle(s1, s2):
+    if len(s1) == 1:
+        return [s2[:i] + s1 + s2[i:] for i in range(len(s2) + 1)]
+    if len(s2) == 1:
+        return [s1[:i] + s2 + s1[i:] for i in range(len(s1) + 1)]
+    if len(s1) == 0:
+        return [s1]
+    if len(s2) == 0:
+        return [s2]
+    return list(
+        set(
+            [s1[0] + s for s in shuffle(s1[1:], s2)]
+            + [s2[0] + s for s in shuffle(s1, s2[1:])]
+        )
+    )
+
+
+# print(sorted(shuffle("", "")))
+
+
+# a = sorted(shuffle("abab", "baba"))
+# print(a)
+# assert a == [
+#     "abababab",
+#     "abababba",
+#     "ababbaab",
+#     "ababbaba",
+#     "abbaabab",
+#     "abbaabba",
+#     "abbabaab",
+#     "abbababa",
+#     "baababab",
+#     "baababba",
+#     "baabbaab",
+#     "baabbaba",
+#     "babaabab",
+#     "babaabba",
+#     "bababaab",
+#     "babababa",
+# ]
+
+# print(shuffle("ab", "cd"))
+# print(sorted(shuffle("", "e")))
+
+
+def shuffle(s1, s2):
+    if not s1:
+        return {s2}
+    if not s2:
+        return {s1}
+    if len(s1) == 1:
+        return {s2[:i] + s1 + s2[i:] for i in range(len(s2) + 1)}
+    if len(s2) == 1:
+        return {s1[:i] + s2 + s1[i:] for i in range(len(s1) + 1)}
+    return {s1[0] + s for s in shuffle(s1[1:], s2)} | {
+        s2[0] + s for s in shuffle(s1, s2[1:])
+    }
+
+
+def shuffle_language(A, B):
+    result = set()
+    for a in A:
+        for b in B:
+            result |= shuffle(a, b)
+    return result
+
+
+# Test cases
+print(sorted(shuffle_language({""}, {"ab", "aa", "ac"})))
+
+# Test cases
+# print(sorted(shuffle_language({"ab"}, {"cd", "e"})))
+# print(sorted(shuffle_language({}, {"aa", "ab", "bb"})))

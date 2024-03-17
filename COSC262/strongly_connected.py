@@ -25,20 +25,34 @@ def is_strongly_connected(adj_list):
 
 # # Strongly connected
 graph_string = """\
-D 3
+D 5
 0 1
-1 0
 0 2
+1 2
+2 3
+1 3
+3 0
 """
 b, direction = adjacency_list(graph_string)
 # print(b)
 print(is_strongly_connected(adjacency_list(graph_string)))
 
-graph_string = """\
-D 3
-0 1
-1 2
-2 0
-"""
+# # Strongly connected
+# graph_string = """\
+# D 3
+# 0 1
+# 1 0
+# 0 2
+# """
+# b, direction = adjacency_list(graph_string)
+# # print(b)
+# print(is_strongly_connected(adjacency_list(graph_string)))
 
-print(is_strongly_connected(adjacency_list(graph_string)))
+# graph_string = """\
+# D 3
+# 0 1
+# 1 2
+# 2 0
+# """
+
+# print(is_strongly_connected(adjacency_list(graph_string)))

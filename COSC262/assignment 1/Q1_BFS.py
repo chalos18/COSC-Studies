@@ -64,3 +64,72 @@ def format_sequence(converters_info, source_format, destination_format):
         return path
     else:
         return path
+
+
+# converters_info_str = """\
+# D 5
+# 0 1
+# 0 2
+# 1 2
+# 2 3
+# 1 3
+# 3 0
+# """
+
+# print(format_sequence(converters_info_str, 1, 0))
+# print(format_sequence(converters_info_str, 0, 3) in [[0, 1, 3], [0, 2, 3]])
+# print(format_sequence(converters_info_str, 4, 4))
+# print(format_sequence(converters_info_str, 3, 3))
+# print(format_sequence(converters_info_str, 3, 2))
+# print(format_sequence(converters_info_str, 3, 4))
+
+
+# converters_info_str = """\
+# D 2
+# 0 1
+# """
+
+# source_format = 0
+# destination_format = 1
+
+# a = format_sequence(converters_info_str, source_format, destination_format)
+# print(a)
+# assert a == [0, 1]
+
+# converters_info_str = """\
+# D 2
+# 0 1
+# """
+
+# b = format_sequence(converters_info_str, 1, 1)
+# print(b)
+# assert b == [1]
+
+# converters_info_str = """\
+# D 2
+# 0 1
+# """
+
+# c = format_sequence(converters_info_str, 1, 0)
+# print(c)
+# assert c == "No solution!"
+
+# converters_info_str = """\
+# D 5
+# 1 0
+# 0 2
+# 2 3
+# 1 2
+# """
+
+# d = format_sequence(converters_info_str, 1, 2)
+# print(d)
+# assert d == [1, 2]
+
+# converters_info_str = """\
+# D 1
+# """
+
+# e = format_sequence(converters_info_str, 0, 0)
+# print(e)
+# assert e == [0]

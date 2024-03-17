@@ -33,9 +33,22 @@ def bfs_tree(adj_list, start_index):
 
     return bfs_loop(adj_list, Q, state, parent), state
 
+converters_info_str = """\
+D 5
+0 1
+0 2
+1 2
+2 3
+1 3
+3 0
+"""
+a = adjacency_list(converters_info_str)
+b = bfs_tree(a[0], 3)
+print(b)
+
 #  BFS tree
 # an undirected graph
-adj_list = [[(1, None)], [(0, None), (2, None)], [(1, None)]]
+# adj_list = [[(1, None)], [(0, None), (2, None)], [(1, None)]]
 
-print(bfs_tree(adj_list, 0))
-print(bfs_tree(adj_list, 1))
+# print(bfs_tree(adj_list, 0))
+# print(bfs_tree(adj_list, 1))
