@@ -36,8 +36,8 @@ def directed_adjacency_list(o_list, edges, weighted=False):
 
 
 def bfs_loop(adj_list, Q, state, parent):
-    while Q:
-        u = Q.popleft()
+    while len(Q) != 0:
+        u = deque.popleft(Q)
         for v in adj_list[u]:
             v = v[0]
             if state[v] == "U":
@@ -45,7 +45,7 @@ def bfs_loop(adj_list, Q, state, parent):
                 parent[v] = u
                 Q.append(v)
         state[u] = "P"
-    return parent
+    return parent, state
 
 
 def adjacency_list(graph_string):
@@ -75,14 +75,24 @@ def connected_components(adj_list):
     n = len(adj_list)
     state = ["U" for _ in range(n)]
     parent = [None for _ in range(n)]
+    start_state = []
+    for i in enumerate(state, 0):
+        start_state.append(i)
+
     Q = deque()
     components = []
-    for i in range(n):  # Changed loop range
+    for i in range(n):
         if state[i] == "U":
+            previous_state = state[:]
             state[i] = "D"
             Q.append(i)
-            new_component = bfs_loop(adj_list, Q, state, parent)
-            components.append(new_component)  # Append new_component to components list
+            bfs_loop(adj_list, Q, state, parent)
+            new_components = []
+            for i in range(len(previous_state)):
+                if state[i] != previous_state[i]:
+                    new_components.append(i)
+            components.append(set(new_components))
+
     return components
 
 
@@ -98,16 +108,16 @@ def bubbles(physical_contact_info):
     """
     adj_list, _ = adjacency_list(physical_contact_info)
     components = connected_components(adj_list)
-    print(components)
     return components
 
 
-physical_contact_info = """\
-U 2
-0 1
-"""
+# physical_contact_info = """\
+# U 2
+# 0 1
+# """
 
-print(sorted(sorted(bubble) for bubble in bubbles(physical_contact_info)))
+# # bubbles(physical_contact_info)
+# print(sorted(sorted(bubble) for bubble in bubbles(physical_contact_info)))
 
 # physical_contact_info = """\
 # U 2
