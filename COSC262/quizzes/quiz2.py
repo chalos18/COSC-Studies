@@ -470,7 +470,7 @@ def shuffle_language(A, B):
 
 
 # Test cases
-print(sorted(shuffle_language({""}, {"ab", "aa", "ac"})))
+# print(sorted(shuffle_language({""}, {"ab", "aa", "ac"})))
 
 # Test cases
 # print(sorted(shuffle_language({"ab"}, {"cd", "e"})))
