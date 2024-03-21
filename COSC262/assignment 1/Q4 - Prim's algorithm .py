@@ -16,3 +16,20 @@ def which_segments(city_map):
         The smaller number should appear first.
         If the solution is not unique, it does not matter which solution is returned by the function
     """
+
+
+city_map = """\
+U 3 W
+0 1 1
+2 1 2
+2 0 4
+"""
+
+print(sorted(which_segments(city_map)))
+
+
+city_map = """\
+U 1 W
+"""
+
+print(sorted(which_segments(city_map)))

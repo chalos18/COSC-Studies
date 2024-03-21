@@ -107,15 +107,15 @@ U 4 W
 """
 
 print(dijkstra(adjacency_list(graph_string), 0))
-print(dijkstra(adjacency_list(graph_string), 2))
+# print(dijkstra(adjacency_list(graph_string), 2))
 
 
-graph_string = """\
-D 3 W
-1 0 3
-2 0 1
-1 2 1
-"""
+# graph_string = """\
+# D 3 W
+# 1 0 3
+# 2 0 1
+# 1 2 1
+# """
 
-print(dijkstra(adjacency_list(graph_string), 1))
-print(dijkstra(adjacency_list(graph_string), 2))
+# print(dijkstra(adjacency_list(graph_string), 1))
+# print(dijkstra(adjacency_list(graph_string), 2))

@@ -64,12 +64,24 @@ def odds(data):
 
 
 # Answer
-def odds(data):
-    if len(data) == 0:
+# def odds(data):
+#     if len(data) == 0:
+#         return []
+#     else:
+#         first = data[0]
+#         remaining = odds(data[1:])
+#         if first % 2 != 0:
+#             remaining.insert(0, first)
+#         return remaining
+
+
+# Cleaner approach
+def odds(data, start_index=0):
+    if start_index >= len(data):
         return []
     else:
-        first = data[0]
-        remaining = odds(data[1:])
+        first = data[start_index]
+        remaining = odds(data, start_index + 1)
         if first % 2 != 0:
             remaining.insert(0, first)
         return remaining
@@ -79,12 +91,22 @@ def odds(data):
 # print(result)
 
 
-def squares(data):
-    if len(data) == 0:
+# def squares(data):
+#     if len(data) == 0:
+#         return []
+#     else:
+#         first = data[0]
+#         remaining = squares(data[1:])
+#         remaining.insert(0, first**2)
+#         return remaining
+
+
+def squares(data, start_index=0):
+    if start_index >= len(data):
         return []
     else:
-        first = data[0]
-        remaining = squares(data[1:])
+        first = data[start_index]
+        remaining = squares(data, start_index + 1)
         remaining.insert(0, first**2)
         return remaining
 
@@ -93,15 +115,15 @@ def squares(data):
 # print(result)
 
 
-def find(data, value):
-    if len(data) == 0:
-        return None
-    else:
-        first = data[0]
-        remaining = find(data[1:], value)
-        if first == value:
-            remaining = 1
-        return remaining
+# def find(data, value):
+#     if len(data) == 0:
+#         return None
+#     else:
+#         first = data[0]
+#         remaining = find(data[1:], value)
+#         if first == value:
+#             remaining = 1
+#         return remaining
 
 
 def find(data, value):
@@ -118,10 +140,23 @@ def find(data, value):
             return found + 1
 
 
-# print(find(["hi", "there", "you", "there"], "there"))
-# print(find([10, 20, 30], 0))
-# print(find([10, 20, 30], 30))
-# print(find(list(range(0, 51)), 49))
+# def find(data, value, start_index=0):
+#     if not data:
+#         return None
+#     elif data[0] == value:
+#         return 0
+#     else:
+#         found = find(data, value, start_index + 1)
+#         if found is None:
+#             return None
+#         else:
+#             return found + 1
+
+
+print(find(["hi", "there", "you", "there"], "there"))
+print(find([10, 20, 30], 0))
+print(find([10, 20, 30], 30))
+print(find(list(range(0, 51)), 49))
 
 # def almost_all(numbers):
 #     for x in numbers:
