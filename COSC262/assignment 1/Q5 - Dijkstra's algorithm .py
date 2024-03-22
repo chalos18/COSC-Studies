@@ -131,10 +131,21 @@ U 4 W
 # 0 2 5
 # """
 
-print(min_capacity(city_map, 0))
-print(min_capacity(city_map, 1))
-print(min_capacity(city_map, 2))
-print(min_capacity(city_map, 3))
+
+city_map = """\
+U 3 W
+0 1 1
+2 1 2
+2 0 4
+"""
+
+a = min_capacity(city_map, 0)
+print(a)
+
+# print(min_capacity(city_map, 0))
+# print(min_capacity(city_map, 1))
+# print(min_capacity(city_map, 2))
+# print(min_capacity(city_map, 3))
 
 graph_string = """\
 D 3 W

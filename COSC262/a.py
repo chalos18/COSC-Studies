@@ -1,5 +1,6 @@
 import math
 
+
 def undirected_adjaceny_list(u_list, edges, weighted=False):
     if weighted == True:
         for line in u_list[1:]:
@@ -72,46 +73,50 @@ def next_vertex(in_tree, distance):
     return min_vertex
 
 
-def dijkstra(adj_list, start):
+def which_segments(city_map):
     """
-    Takes the adjacency list of a weighted (D or U) graph
-    Then runs Dijkstra's shortest path algorithm starting from vertex start
-    Then returns a par (parent, distance) that contains the parent and distance arrays
+    Takes the map of the city and returns the list of road segments that
+    must be cleared so that there is a clear path between any two locations and the total
+    length of the cleaned-up road segments is minimised
+
+    Undirectted weighted graph, each vertex is one location in the city.
+    Each two way road segment is represented as an edge which connects two locations together
+    and the weight of the edge is the length of road segment
+
+    The given city has at least one location
+    There is a path between any two locations
+
+    The output is a list of orad segments that must be cleared
+    Each segment is a tuple of two lcoation numbers
+    The smaller number should appear first.
+    If the solution is not unique, it does not matter which solution is returned by the function
     """
-    adjacency_list, _ = adj_list[0], adj_list[1]
-    n = len(adjacency_list)
+    adj_list, _ = adjacency_list(city_map)
+    n = len(adj_list)
     in_tree = [False for _ in range(n)]
     distance = [math.inf for _ in range(n)]
     parent = [None for _ in range(n)]
-    distance[start] = 0
+    distance[0] = 0
 
     while not all(in_tree):
         u = next_vertex(in_tree, distance)
         in_tree[u] = True
-        for v, weight in adjacency_list[u]:
-            if not in_tree[v] and distance[u] + weight < distance[v]:
-                distance[v] = distance[u] + weight
+        for v, weight in adj_list[u]:
+            if not in_tree[v] and weight < distance[v]:
+                distance[v] = weight
                 parent[v] = u
 
-    return parent, distance
+    # road_segments= []
+    # print(parent)
+    # print(distance)
+    # for i in range(len(distance)):
+    #     if parent[i] != None:
+    #         road_segments.append((parent[i], i))
 
+    # return road_segments
 
-def min_capacity(city_map, depot_position):
-    """
-    The city_map is the textual representation of an undirected weighted graph.
-    There is a vertex for each location in the city. There is an edge for each segment of road.
-    All roads are two-way. The length of the road segment is the weight of the edge.
-    The parameter depot_position is a location in the city where the depot is located.
-
-    The function must return an integer that is the minimum capacity required for the battery.
-    """
-    no_inf = []
-    city_map = adjacency_list(city_map)
-    shortest_distances = dijkstra(city_map, depot_position)[1]
-    for a in shortest_distances:
-        if a != math.inf:
-            no_inf.append(a)
-    max_distance = max(no_inf)
-    min_capacity = ((max_distance * 2) * 3 // 2) * 4 // 3
-
-    return min_capacity
+    road_segments = []
+    for i, p in enumerate(parent):
+        if p is not None:
+            road_segments.append((p, i) if p < i else (i, p))
+    return road_segments
