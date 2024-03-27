@@ -184,6 +184,7 @@ def dfs_tree(adj_list, start):
 
     return parent
 
+
 def transpose(adj_list):
     """
     The tranpose of a graph is one where every edge points to the opposite direction - for directed graphs
@@ -227,7 +228,6 @@ def is_strongly_connected(adj_list):
     return True
 
 
-
 def next_vertex(in_tree, distance):
     min_distance = float("inf")
     min_vertex = None
@@ -265,3 +265,85 @@ def dijkstra(adj_list, start):
                 parent[v] = u
 
     return parent, distance
+
+
+def distance_matrix(adj_list):
+    n = len(adj_list)
+    matrix = [[math.inf] * n for _ in range(n)]
+    iterator = 0
+    for row in matrix:
+        row[iterator] = 0
+        iterator += 1
+
+    for i, row in enumerate(adj_list):
+        for edge in row:
+            vertex, weight = edge[0], edge[1]
+            matrix[i][vertex] = weight
+
+    return matrix
+
+
+def floyd(distance):
+    n = len(distance)
+    new_distance = [row[:] for row in distance]
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if new_distance[i][j] > new_distance[i][k] + new_distance[k][j]:
+                    new_distance[i][j] = new_distance[i][k] + new_distance[k][j]
+    return new_distance
+ 
+
+# graph_str = """\
+# D 3 W
+# 0 1 1
+# 1 2 2
+# 2 0 4
+# """
+# adj_graph = adjacency_list(graph_str)[0]
+# matrix = distance_matrix(adj_graph)
+# print("initial distance matrix:")
+# print(matrix)
+# print("Shortest path distances:")
+# print(floyd(matrix))
+# print("final distance matrix:")
+# print(matrix)
+# print("distance matrix should unchanged")
+
+
+# graph_str = """\
+# D 3 W
+# 0 1 1
+# 1 2 2
+# 2 0 4
+# """
+
+# adj_list = adjacency_list(graph_str)[0]
+# dist_matrix = distance_matrix(adj_list)
+# print("Initial distance matrix:", dist_matrix)
+# dist_matrix = floyd(dist_matrix)
+# print("Shortest path distances:", dist_matrix)
+
+graph_str = """\
+U 3 W
+0 1 5
+2 1 7
+"""
+
+# adj_list = adjacency_list(graph_str)[0]
+# print(adj_list)
+# print(distance_matrix(adj_list))
+
+# # more readable output (less readable code):
+# print("\nEach row on a new line:")
+# print("\n".join(str(lst) for lst in distance_matrix(adj_list)))
+
+
+graph_str = """\
+D 2 W
+0 1 4
+"""
+
+adj_list = adjacency_list(graph_str)[0]
+# print(adj_list)
+# print(distance_matrix(adj_list))
