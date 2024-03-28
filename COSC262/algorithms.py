@@ -58,6 +58,7 @@ def adjacency_list(graph_string):
         result = directed_adjacency_list(lines, edges, weighted)
 
     return result, direction
+    # return result
 
 
 def undirected_adjacency_matrix(u_list, edges, num_vertices, weighted=False):
@@ -292,7 +293,7 @@ def floyd(distance):
                 if new_distance[i][j] > new_distance[i][k] + new_distance[k][j]:
                     new_distance[i][j] = new_distance[i][k] + new_distance[k][j]
     return new_distance
- 
+
 
 # graph_str = """\
 # D 3 W
