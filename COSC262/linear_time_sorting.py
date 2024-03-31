@@ -74,7 +74,7 @@ def radix_key(d):
     return get_digit
 
 
-# number = 123
+# number = 132
 # ones = radix_key(1)
 # print(ones(number))
 # tens = radix_key(2)
@@ -93,3 +93,21 @@ def radix_key(d):
 # tens = radix_key(2)
 # for number in numbers:
 #     print(tens(number))
+
+
+def radix_sort(numbers, d):
+    # Corrected the range to include the most significant digit
+    for i in range(1, d + 1):
+        # Extract current digit
+        numbers = counting_sort(numbers, lambda x, i=i: (x // 10 ** (i - 1)) % 10)
+    return numbers
+
+
+input_list = [329, 457, 657, 839, 436, 720, 355]
+output_list = radix_sort(input_list, 3)
+# print(input_list)
+# print(output_list)
+
+print(radix_sort([329, 457, 657, 839, 436, 720, 355], 1))
+
+print(radix_sort([329, 457, 657, 839, 436, 720, 355], 2))
