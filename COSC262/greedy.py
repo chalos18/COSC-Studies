@@ -142,7 +142,7 @@ converted_data = [
 
 # Use the buskers_schedule function
 result = buskers_schedule(converted_data)
-print(result)
+# print(result)
 
 
 # [('b', 1, 4), ('e', 4, 7), ('h', 8, 11)]
@@ -160,3 +160,58 @@ print(result)
 #         ]
 #     )
 # )
+
+
+def fractional_knapsack(capacity, items):
+    """
+    Returns the maximun achievable value obtainable with a knapsack of the given capacity
+    and a given lsit of items, each represented by a tuple (name, value, weight). In this problem,
+    you are allowed to take fractions of an item but at most one of any item.
+    """
+    dict_bi_wi = {}
+    for tuples in items:
+        value = tuples[1]
+        weight = tuples[2]
+        bi_wi = int(value / weight)
+        dict_bi_wi[bi_wi] = tuples
+
+    dict_bi_wi_values = sorted(dict_bi_wi, reverse=True)
+
+    count = {}
+    total = 0
+    for value in dict_bi_wi_values:
+        if capacity == 0:
+            break
+        dict_tuple_values = dict_bi_wi[value]
+        weight_values = dict_tuple_values[2]
+        if capacity - weight_values > 0:
+            capacity -= weight_values
+            total_value = dict_bi_wi[value][1]
+            total += dict_bi_wi[value][1]
+        if capacity - weight_values < 0:
+            portion = capacity / weight_values
+            remaining = weight_values * portion
+            capacity -= remaining
+            total_value = dict_bi_wi[value][1] * portion
+            total += total_value
+        count[dict_bi_wi[value][0]] = (1, total_value)
+
+    return total
+
+
+items = [
+    ("Chocolate cookies", 20, 5),
+    ("Potato chips", 15, 3),
+    ("Pizza", 14, 2),
+    ("Popcorn", 12, 4),
+]
+print(float(fractional_knapsack(10, items)))
+
+# # The example from the lecture notes
+# items = [
+#     ("Chocolate cookies", 20, 5),
+#     ("Potato chips", 15, 3),
+#     ("Pizza", 14, 2),
+#     ("Popcorn", 12, 4),
+# ]
+# print(fractional_knapsack(9, items))
