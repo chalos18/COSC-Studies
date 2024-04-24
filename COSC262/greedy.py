@@ -163,17 +163,12 @@ result = buskers_schedule(converted_data)
 
 
 def fractional_knapsack(capacity, items):
-    """
-    Returns the maximun achievable value obtainable with a knapsack of the given capacity
-    and a given lsit of items, each represented by a tuple (name, value, weight). In this problem,
-    you are allowed to take fractions of an item but at most one of any item.
-    """
     dict_bi_wi = {}
     for tuples in items:
         value = tuples[1]
         weight = tuples[2]
-        bi_wi = int(value / weight)
-        dict_bi_wi[bi_wi] = tuples
+        bi_wi = value / weight
+        dict_bi_wi[bi_wi, tuples[0]] = tuples  # Include item name in key
 
     dict_bi_wi_values = sorted(dict_bi_wi, reverse=True)
 
@@ -184,19 +179,41 @@ def fractional_knapsack(capacity, items):
             break
         dict_tuple_values = dict_bi_wi[value]
         weight_values = dict_tuple_values[2]
-        if capacity - weight_values > 0:
+        if capacity - weight_values >= 0:
             capacity -= weight_values
             total_value = dict_bi_wi[value][1]
             total += dict_bi_wi[value][1]
-        if capacity - weight_values < 0:
+            count[dict_bi_wi[value][0]] = (1, total_value)
+        else:
             portion = capacity / weight_values
             remaining = weight_values * portion
             capacity -= remaining
             total_value = dict_bi_wi[value][1] * portion
             total += total_value
-        count[dict_bi_wi[value][0]] = (1, total_value)
+            count[dict_bi_wi[value][0]] = (portion, total_value)
 
     return total
+
+
+# Should be 84.0
+items = [
+    ("Chocolate cookies", 20, 5),
+    ("Potato chips", 20, 5),
+    ("Pizza", 20, 5),
+    ("Fizzy rubbish", 20, 5),
+    ("Popcorn", 20, 5),
+]
+# print(float(fractional_knapsack(21, items)))
+
+
+# Should be 61.0
+items = [
+    ("Chocolate cookies", 20, 5),
+    ("Potato chips", 15, 3),
+    ("Pizza", 14, 2),
+    ("Popcorn", 12, 4),
+]
+# print(float(fractional_knapsack(14, items)))
 
 
 items = [
@@ -205,13 +222,13 @@ items = [
     ("Pizza", 14, 2),
     ("Popcorn", 12, 4),
 ]
-print(float(fractional_knapsack(10, items)))
+# print(float(fractional_knapsack(10, items)))
 
 # # The example from the lecture notes
-# items = [
-#     ("Chocolate cookies", 20, 5),
-#     ("Potato chips", 15, 3),
-#     ("Pizza", 14, 2),
-#     ("Popcorn", 12, 4),
-# ]
+items = [
+    ("Chocolate cookies", 20, 5),
+    ("Potato chips", 15, 3),
+    ("Pizza", 14, 2),
+    ("Popcorn", 12, 4),
+]
 # print(fractional_knapsack(9, items))
