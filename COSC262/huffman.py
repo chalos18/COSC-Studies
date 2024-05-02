@@ -2,6 +2,7 @@ from datetime import datetime
 from algorithms import *
 from tests import *
 import csv
+import heapq
 
 """An incomplete Huffman Coding module, for use in COSC262.
    Richard Lobb, April 2021.
@@ -56,6 +57,16 @@ class Node:
             self.right.plot(graph)
             graph.edge(str(id(self)), str(id(self.right)), "1")
 
+    def traverse(self, path=""):
+        """Traverse the tree and build a dictionary that maps leaf node characters
+        to their corresponding binary paths."""
+        if self.is_leaf():
+            return {self.char: path}
+        else:
+            left_paths = self.left.traverse(path + "0")
+            right_paths = self.right.traverse(path + "1")
+            return {**left_paths, **right_paths}
+
 
 class Leaf:
     """A leaf node in a Huffman encoding tree. Contains a character and its
@@ -78,6 +89,16 @@ class Leaf:
         label = f"{self.count},{self.char}"
         graph.node(str(id(self)), label)  # Add this leaf to the graph
 
+    def traverse(self, path=""):
+        """Traverse the tree and build a dictionary that maps leaf node characters
+        to their corresponding binary paths."""
+        if self.is_leaf():
+            return {self.char: path}
+        else:
+            left_paths = self.left.traverse(path + "0")
+            right_paths = self.right.traverse(path + "1")
+            return {**left_paths, **right_paths}
+
 
 class HuffmanTree:
     """Operations on an entire Huffman coding tree."""
@@ -98,23 +119,24 @@ class HuffmanTree:
         # return the binary path
         if node.is_leaf() and node.char == target_char:
             return path
-        
+
         # Recursively search in the left and right subtrees
         left_result = self.find_binary_encoding(node.left, target_char, path + "0")
         if left_result is not None:
             return left_result
-        right_result = self.find_binary_encoding(
-            node.right, target_char, path + "1"
-        )
+        right_result = self.find_binary_encoding(node.right, target_char, path + "1")
         return right_result
 
     def encode(self, text):
         """Return the binary string of '0' and '1' characters that encodes the
         given string text using this tree.
         """
-        binary_encoding = ""
-        for letter in text:
-            binary_encoding += self.find_binary_encoding(self.root, letter)
+        # Traverse the tree to build the dictionary of character paths
+        paths_dict = self.root.traverse()
+
+        # Encode the text using the paths dictionary
+        binary_encoding = "".join(paths_dict[char] for char in text)
+
         return binary_encoding
 
     def decode(self, binary):
@@ -153,8 +175,8 @@ class HuffmanTree:
         """Define self.root to be the Huffman tree for encoding a set of characters,
         given a map from character to frequency.
         """
-        self.root = None  # *** FIXME ***
-        raise NotImplementedError  # *** TO BE IMPLEMENTED
+        # TODO 
+
 
     def build_from_string(self, s):
         """Convert the string representation of a Huffman tree, as generated
@@ -166,21 +188,27 @@ class HuffmanTree:
         self.root = eval(s)
 
 
-# The example from the lecture notes
-tree = HuffmanTree(
-    Node(
-        Node(Leaf(8, "b"), Leaf(9, "a")),
-        Node(Node(Node(Leaf(2, "f"), Leaf(3, "d")), Leaf(5, "e")), Leaf(15, "c")),
-    )
-)
-print(tree.encode("adcb"))
+# The example from the notes
+freqs = {"a": 9, "b": 8, "c": 15, "d": 3, "e": 5, "f": 2}
+tree = HuffmanTree()
+tree.build_from_freqs(freqs)
+print(tree)
 
 # The example from the lecture notes
-tree = HuffmanTree(
-    Node(
-        Node(Leaf(8, "b"), Leaf(9, "a")),
-        Node(Node(Node(Leaf(2, "f"), Leaf(3, "d")), Leaf(5, "e")), Leaf(15, "c")),
-    )
-)
+# tree = HuffmanTree(
+#     Node(
+#         Node(Leaf(8, "b"), Leaf(9, "a")),
+#         Node(Node(Node(Leaf(2, "f"), Leaf(3, "d")), Leaf(5, "e")), Leaf(15, "c")),
+#     )
+# )
+# print(tree.encode("adcb"))
+
+# # The example from the lecture notes
+# tree = HuffmanTree(
+#     Node(
+#         Node(Leaf(8, "b"), Leaf(9, "a")),
+#         Node(Node(Node(Leaf(2, "f"), Leaf(3, "d")), Leaf(5, "e")), Leaf(15, "c")),
+#     )
+# )
 
 # print(tree.decode("0110011100"))
