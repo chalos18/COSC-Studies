@@ -37,7 +37,11 @@ reserved = {
     'end': 'END',
     'if': 'IF',
     'then': 'THEN',
-    'while': 'WHILE'
+
+    # ADDED THE BELOW
+    'while': 'WHILE',
+    'read': 'READ',
+    'write': 'WRITE',
 }
 
 # all token types
@@ -89,11 +93,17 @@ t_SUB = r'-'
 t_LPAR = r'\('
 t_RPAR = r'\)'
 
-### add code for inequality, multiplication, division and numbers ###
+# Added the below. why do some operators need a \ (backslash)
+t_NEQ = r"!="
+t_MUL = r'\*'
+t_DIV = r'/'
+t_NUM = r'\d+'
+
 
 def t_ID(t):
     r'[a-z]+'
     ### add code for reserved words using the dictionary above ###
+    t.type = reserved.get(t.value, 'ID')
     return t
 
 # rule to track line numbers
@@ -119,4 +129,3 @@ for token in scanner:
         print(token.type, token.value)
     else:
         print(token.type)
-
