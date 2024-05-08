@@ -526,9 +526,9 @@ def grid_cost(grid):
             # plus the minimum cost of reaching the cell from the above row
             # considering all possible moves
             dp[row][col] = grid[row][col] + min(
-                dp[row - 1][col + delta_col]
-                for delta_col in range(-1, 2)
-                if 0 <= col + delta_col < n_cols
+                dp[row - 1][col + delta_col]  # Cost of reaching the cell from above
+                for delta_col in range(-1, 2)  # Consider all possible columns in the above row
+                if 0 <= col + delta_col < n_cols  # Ensure the column index is within bounds
             )
 
     # The best cost is the minimum cost of reaching the last row
