@@ -516,8 +516,8 @@ def grid_cost(grid):
 
     # Fill in the base case: the cost of the first row is just the grid itself
     dp[0] = grid[0]
-    print(grid)
-    print(dp[0])
+    # print(grid)
+    # print(dp[0])
 
     # Build up the DP table iteratively
     for row in range(1, n_rows):

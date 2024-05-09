@@ -1,38 +1,35 @@
-''' Parser template for COSC261 Assignment
-    ## WARNING ## Your code should be derived from this template 
-                  by modifying only the parts mentioned in the requirements; 
-                  other changes are at your own risk. 
-                  Feel free, however, to experiment during the development.
-'''
-
 import re
 import sys
 
 class Scanner:
     '''The interface comprises the methods lookahead and consume.
-       Other methods should not be called from outside of this class.
-    '''
+       Other methods should not be called from outside of this class.'''
 
     def __init__(self, input_file):
         '''Reads the whole input_file to input_string, which remains constant.
            current_char_index counts how many characters of input_string have
            been consumed.
-           next_token holds the most recently found token and the
-           corresponding part of input_string.
-        '''
+           current_token holds the most recently found token and the
+           corresponding part of input_string.'''
         # source code of the program to be compiled
         self.input_string = input_file.read()
         # index where the unprocessed part of input_string starts
         self.current_char_index = 0
         # a pair (most recently read token, matched substring of input_string)
-        self.next_token = self.get_token()
+        self.current_token = self.get_token()
 
     def skip_white_space(self):
-        '''Consumes white-space characters in input_string up to the 
-           next non-white-space character.
-        '''
-        raise Exception('skip_white_space not implemented')
+        '''Consumes all characters in input_string up to the next
+           non-white-space character.'''
 
+        for i in range(self.current_char_index, len(self.input_string)):
+            if self.input_string[i].isspace():
+                self.current_char_index += 1
+                if self.current_char_index >= len(self.input_string):
+                    break
+            else:
+                break
+        
     def no_token(self):
         '''Stop execution if the input cannot be matched to a token.'''
         print('lexical error: no token found at the start of ' +
@@ -44,9 +41,8 @@ class Scanner:
            The returned token is None if there is no next token.
            The characters up to the end of the token are consumed.
            TODO:
-           Call no_token() if the input contains extra characters that 
-           do not match any token (and are not white-space).
-        '''
+           Call no_token() if the input contains extra non-white-space
+           characters that do not match any token.'''
         self.skip_white_space()
         # find the longest prefix of input_string that matches a token
         token, longest = None, ''
@@ -54,21 +50,26 @@ class Scanner:
             match = re.match(r, self.input_string[self.current_char_index:])
             if match and match.end() > len(longest):
                 token, longest = t, match.group()
-        # consume the token by moving the index to the end of the matched part
-        self.current_char_index += len(longest)
-        return (token, longest)
+        if token == None:
+            if self.current_char_index >= len(self.input_string):
+                return (None, None)
+            else:
+                self.no_token()
+        else:
+            # consume the token by moving the index to the end of the matched part
+            self.current_char_index += len(longest)
+            return (token, longest)            
+        
 
     def lookahead(self):
         '''Returns the next token without consuming it.
-           Returns None if there is no next token.
-        '''
-        return self.next_token[0]
+           Returns None if there is no next token.'''
+        return self.current_token[0]
 
     def unexpected_token(self, found_token, expected_tokens):
         '''Stop execution because an unexpected token was found.
            found_token contains just the token, not its value.
-           expected_tokens is a sequence of tokens.
-        '''
+           expected_tokens is a sequence of tokens.'''
         print('syntax error: token in ' + repr(sorted(expected_tokens)) +
               ' expected but ' + repr(found_token) + ' found')
         sys.exit()
@@ -77,10 +78,24 @@ class Scanner:
         '''Returns the next token and consumes it, if it is in
            expected_tokens. Calls unexpected_token(...) otherwise.
            If the token is a number or an identifier, not just the
-           token but a pair of the token and its value is returned.
-        '''
-        raise Exception('consume not implemented')
-
+           token but a pair of the token and its value is returned.'''
+        
+        if self.current_token is None:
+            return
+        else:
+            token, token_str = self.current_token
+            
+            if token in expected_tokens:
+                if token == Token.ID or token == Token.NUM:
+                    self.current_token = self.get_token()
+                    return (token, token_str)
+                else:
+                    self.current_token = self.get_token()
+                    return token
+            else:
+                self.unexpected_token(token, expected_tokens)
+            
+        
 class Token:
     # The following enumerates all tokens.
     DO    = 'DO'
@@ -105,30 +120,40 @@ class Token:
     RPAR  = 'RPAR'
     NUM   = 'NUM'
     ID    = 'ID'
+    READ  = 'READ'
+    WRITE = 'WRITE'
 
     # The following list gives the regular expression to match a token.
     # The order in the list matters for mimicking Flex behaviour.
     # Longer matches are preferred over shorter ones.
     # For same-length matches, the first in the list is preferred.
     token_regexp = [
-        (DO,    'do'),
+        (WHILE, 'while'),      
+        (WRITE, 'write'),
         (ELSE,  'else'),
-        (END,   'end'),
-        (IF,    'if'),
         (THEN,  'then'),
-        (WHILE, 'while'),
+        (GRTR,  '>'),
+        (LESS,  '<'),
+        (LPAR,  '\\('), # ( is special in regular expressions
+        (RPAR,  '\\)'), # ) is special in regular expressions        
+        (READ,  'read'),
+        (END,   'end'),
         (SEM,   ';'),
         (BEC,   ':='),
-        (LESS,  '<'),
-        (EQ,    '='),
-        (GRTR,  '>'),
         (LEQ,   '<='),
+        (NEQ,   '!='),
         (GEQ,   '>='),
         (ADD,   '\\+'), # + is special in regular expressions
         (SUB,   '-'),
-        (LPAR,  '\\('), # ( is special in regular expressions
-        (RPAR,  '\\)'), # ) is special in regular expressions
-        (ID,    '[a-z]+'),
+        (MUL,   '\\*'), # * is special in regular expressions
+        (DIV,   '/'),
+        (NUM,   '[0-9]+'),        
+        (DO,    'do'),
+        (IF,    'if'),
+        (EQ,    '='),
+        (ID,    '[a-z]+')
+        
+        
     ]
 
 def indent(s, level):
@@ -170,6 +195,21 @@ class If_AST:
         return indent('If', level) + \
                self.condition.indented(level+1) + \
                self.then.indented(level+1)
+    
+class If_Else_AST:
+    def __init__(self, condition, then, not_then):
+        self.conditon = condition
+        self.then = then
+        self.not_then = not_then
+    def __repr__(self):
+        return 'if' + repr(self.conditon) + ' then ' + \
+               repr(self.then) + ' else ' + repr(self.not_then) + \
+               ' end'
+    def indented(self, level):
+        return indent('If-Else', level) + \
+               self.conditon.indented(level+1) + \
+               self.then.indented(level+1) + \
+               self.not_then.indented(level+1)
 
 class While_AST:
     def __init__(self, condition, body):
@@ -250,7 +290,7 @@ class Identifier_AST:
     def indented(self, level):
         return indent(self.identifier, level)
 
-# The following functions comprise the recursive-descent parser.
+# The following methods comprise the recursive-descent parser.
 
 def program():
     sts = statements()
@@ -271,6 +311,10 @@ def statement():
         return while_statement()
     elif scanner.lookahead() == Token.ID:
         return assignment()
+    elif scanner.lookahead() == Token.WRITE:
+        return write()
+    elif scanner.lookahead() == Token.READ:
+        return read()
     else: # error
         return scanner.consume(Token.IF, Token.WHILE, Token.ID)
 
@@ -279,8 +323,14 @@ def if_statement():
     condition = comparison()
     scanner.consume(Token.THEN)
     then = statements()
-    scanner.consume(Token.END)
-    return If_AST(condition, then)
+    if scanner.lookahead() == Token.ELSE:
+        scanner.consume(Token.ELSE)
+        not_then = statements()
+        scanner.consume(Token.END)
+        return If_Else_AST(condition, then, not_then)
+    else:
+        scanner.consume(Token.END)
+        return If_AST(condition, then)        
 
 def while_statement():
     scanner.consume(Token.WHILE)
@@ -341,9 +391,20 @@ def identifier():
     value = scanner.consume(Token.ID)[1]
     return Identifier_AST(value)
 
+def write():
+    scanner.consume(Token.WRITE)
+    express = expression()
+    return Write_AST(express)
+
+def read():
+    scanner.consume(Token.READ)
+    iden = identifier()
+    return Read_AST(iden)
+
 # Initialise scanner.
 
-scanner = Scanner(sys.stdin)
+#scanner = Scanner(sys.stdin)
+scanner = Scanner(open("program2.txt"))
 
 # Uncomment the following to test the scanner without the parser.
 # Show all tokens in the input.
@@ -369,4 +430,3 @@ if scanner.lookahead() != None:
 # Show the syntax tree with levels indicated by indentation.
 
 print(ast.indented(0), end='')
-
