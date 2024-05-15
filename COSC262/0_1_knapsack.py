@@ -104,6 +104,8 @@ def max_value_bottom_up(items, capacity, n=None, cache=None):
                     items_used[(i, w)] = items[i - 1]
             else:
                 cache[i][w] = cache[i - 1][w]
+    
+    print(cache)
 
     # Reconstruct the list of items used
     itemList = []
