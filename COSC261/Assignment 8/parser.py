@@ -152,8 +152,6 @@ class Token:
         (IF,    'if'),
         (EQ,    '='),
         (ID,    '[a-z]+')
-        
-        
     ]
 
 def indent(s, level):
