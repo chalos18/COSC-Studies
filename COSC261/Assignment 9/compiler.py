@@ -1,10 +1,3 @@
-''' Compiler template for COSC261 Assignment
-    ## WARNING ## Your code should be derived from this template 
-                  by modifying only the parts mentioned in the requirements; 
-                  other changes are at your own risk. 
-                  Feel free, however, to experiment during the development.
-'''
-
 import re
 import sys
 
@@ -15,175 +8,166 @@ import sys
 # Logical operators cannot be nested.
 
 class Scanner:
-    """The interface comprises the methods lookahead and consume.
-    Other methods should not be called from outside of this class.
-    """
+    '''The interface comprises the methods lookahead and consume.
+       Other methods should not be called from outside of this class.'''
 
     def __init__(self, input_file):
-        """Reads the whole input_file to input_string, which remains constant.
-        current_char_index counts how many characters of input_string have
-        been consumed.
-        next_token holds the most recently found token and the
-        corresponding part of input_string.
-        """
+        '''Reads the whole input_file to input_string, which remains constant.
+           current_char_index counts how many characters of input_string have
+           been consumed.
+           current_token holds the most recently found token and the
+           corresponding part of input_string.'''
         # source code of the program to be compiled
         self.input_string = input_file.read()
         # index where the unprocessed part of input_string starts
         self.current_char_index = 0
         # a pair (most recently read token, matched substring of input_string)
-        self.next_token = self.get_token()
-
+        self.current_token = self.get_token()
 
     def skip_white_space(self):
-        """Consumes white-space characters in input_string up to the
-        next non-white-space character.
-        Note that white-space includes spaces, tabs, and newline characters.
-        """
-        while (
-            self.current_char_index < len(self.input_string)
-            and self.input_string[self.current_char_index].isspace()
-        ):
-            self.current_char_index += 1
+        '''Consumes all characters in input_string up to the next
+           non-white-space character.'''
+
+        for i in range(self.current_char_index, len(self.input_string)):
+            if self.input_string[i].isspace():
+                self.current_char_index += 1
+                if self.current_char_index >= len(self.input_string):
+                    break
+            else:
+                break
         
     def no_token(self):
-        """Stop execution if the input cannot be matched to a token."""
-        print(
-            "lexical error: no token found at the start of "
-            + self.input_string[self.current_char_index :]
-        )
+        '''Stop execution if the input cannot be matched to a token.'''
+        print('lexical error: no token found at the start of ' +
+              self.input_string[self.current_char_index:])
         sys.exit()
 
     def get_token(self):
-        """Returns the next token and the part of input_string it matched.
-        The returned token is None if there is no next token.
-        The characters up to the end of the token are consumed.
-        TODO:
-        Call no_token() if the input contains extra characters that
-        do not match any token (and are not white-space).
-        Extend the method Scanner.get_token to check if the input contains extra non-white-space
-        characters that do not match any token (see the docstring of this method for more detail).
-        In case of a lexical error, the program will output all recognised tokens before the error except the
-        last recognised token (which is the next_token when the error occurs);
-        Do not compensate for this (for example, by adding additional print-statements).
-        """
+        '''Returns the next token and the part of input_string it matched.
+           The returned token is None if there is no next token.
+           The characters up to the end of the token are consumed.
+           TODO:
+           Call no_token() if the input contains extra non-white-space
+           characters that do not match any token.'''
         self.skip_white_space()
         # find the longest prefix of input_string that matches a token
-        token, longest = None, ""
-        for t, r in Token.token_regexp:
-            match = re.match(r, self.input_string[self.current_char_index :])
+        token, longest = None, ''
+        for (t, r) in Token.token_regexp:
+            match = re.match(r, self.input_string[self.current_char_index:])
             if match and match.end() > len(longest):
                 token, longest = t, match.group()
-        # Check for lexical error
-        if token is None and self.current_char_index < len(self.input_string):
-            self.no_token()
-        # consume the token by moving the index to the end of the matched part
-        self.current_char_index += len(longest)
-        return (token, longest)       
+        if token == None:
+            if self.current_char_index >= len(self.input_string):
+                return (None, None)
+            else:
+                self.no_token()
+        else:
+            # consume the token by moving the index to the end of the matched part
+            self.current_char_index += len(longest)
+            return (token, longest)            
         
 
     def lookahead(self):
-        """Returns the next token without consuming it.
-        Returns None if there is no next token.
-        """
-        return self.next_token[0]
+        '''Returns the next token without consuming it.
+           Returns None if there is no next token.'''
+        return self.current_token[0]
 
     def unexpected_token(self, found_token, expected_tokens):
-        """Stop execution because an unexpected token was found.
-        found_token contains just the token, not its value.
-        expected_tokens is a sequence of tokens.
-        """
-        print(
-            "syntax error: token in "
-            + repr(sorted(expected_tokens))
-            + " expected but "
-            + repr(found_token)
-            + " found"
-        )
+        '''Stop execution because an unexpected token was found.
+           found_token contains just the token, not its value.
+           expected_tokens is a sequence of tokens.'''
+        print('syntax error: token in ' + repr(sorted(expected_tokens)) +
+              ' expected but ' + repr(found_token) + ' found')
         sys.exit()
 
     def consume(self, *expected_tokens):
-        """Returns the next token and consumes it, if it is in
-        expected_tokens. Calls unexpected_token(...) otherwise.
-
-        If the token is a number or an identifier, not just the
-        token but a pair of the token and its value is returned.
-
-        The only attribute you need to access in Scanner.consume is next_token.
-        Scanner.consume should not modify the current character index directly;
-        instead, it should use get_token.
-        """
-        token, value = self.next_token
-
-        # Check if the next token is in the list of expected tokens
-        if token in expected_tokens:
-            # Consume the token by updating next_token
-            self.next_token = self.get_token()
-
-            # If the token is a number or an identifier, return a pair of token and value
-            if token in [Token.NUM, Token.ID]:
-                return (token, value)
-            # If the token is not a number or an identifier, return the token itself
-            return token
+        '''Returns the next token and consumes it, if it is in
+           expected_tokens. Calls unexpected_token(...) otherwise.
+           If the token is a number or an identifier, not just the
+           token but a pair of the token and its value is returned.'''
+        
+        if self.current_token is None:
+            return
         else:
-            # If the next token is not in the list of expected tokens, call unexpected_token method
-            self.unexpected_token(token, expected_tokens)
+            token, token_str = self.current_token
+            
+            if token in expected_tokens:
+                if token == Token.ID or token == Token.NUM:
+                    self.current_token = self.get_token()
+                    return (token, token_str)
+                else:
+                    self.current_token = self.get_token()
+                    return token
+            else:
+                self.unexpected_token(token, expected_tokens)
+            
+        
 class Token:
     # The following enumerates all tokens.
-    DO = "DO"
-    ELSE = "ELSE"
-    END = "END"
-    IF = "IF"
-    THEN = "THEN"
-    WHILE = "WHILE"
-    SEM = "SEM"
-    BEC = "BEC"
-    LESS = "LESS"
-    EQ = "EQ"
-    GRTR = "GRTR"
-    LEQ = "LEQ"
-    NEQ = "NEQ"
-    GEQ = "GEQ"
-    ADD = "ADD"
-    SUB = "SUB"
-    MUL = "MUL"
-    DIV = "DIV"
-    LPAR = "LPAR"
-    RPAR = "RPAR"
-    NUM = "NUM"
-    ID = "ID"
-    READ = "READ"  # New token for 'read'
-    WRITE = "WRITE"  # New token for 'write'
+    DO    = 'DO'
+    ELSE  = 'ELSE'
+    END   = 'END'
+    IF    = 'IF'
+    THEN  = 'THEN'
+    WHILE = 'WHILE'
+    SEM   = 'SEM'
+    BEC   = 'BEC'
+    LESS  = 'LESS'
+    EQ    = 'EQ'
+    GRTR  = 'GRTR'
+    LEQ   = 'LEQ'
+    NEQ   = 'NEQ'
+    GEQ   = 'GEQ'
+    ADD   = 'ADD'
+    SUB   = 'SUB'
+    MUL   = 'MUL'
+    DIV   = 'DIV'
+    LPAR  = 'LPAR'
+    RPAR  = 'RPAR'
+    NUM   = 'NUM'
+    ID    = 'ID'
+    READ  = 'READ'
+    WRITE = 'WRITE'
+    NOT   = 'NOT'
+    AND   = 'AND'
+    OR    = 'OR'
 
     # The following list gives the regular expression to match a token.
     # The order in the list matters for mimicking Flex behaviour.
     # Longer matches are preferred over shorter ones.
     # For same-length matches, the first in the list is preferred.
     token_regexp = [
-        (DO, "do"),
-        (ELSE, "else"),
-        (END, "end"),
-        (IF, "if"),
-        (THEN, "then"),
-        (WHILE, "while"),
-        (READ, "read"),  # New token for 'read'
-        (WRITE, "write"),  # New token for 'write'
-        (SEM, ";"),
-        (BEC, ":="),
-        (LESS, "<"),
-        (EQ, "="),
-        (GRTR, ">"),
-        (LEQ, "<="),
-        (GEQ, ">="),
-        (NEQ, "!="),  # New token for '!='
-        (ADD, "\\+"),  # + is special in regular expressions
-        (SUB, "-"),
-        (MUL, "\\*"),  # New token for multiplication
-        (DIV, "/"),  # New token for division
-        (LPAR, "\\("),  # ( is special in regular expressions
-        (RPAR, "\\)"),  # ) is special in regular expressions
-        (ID, "[a-z]+"),
-        (NUM, "\\d+"),  # Regular expression for numbers (one or more digits)
+        (WHILE, 'while'),      
+        (WRITE, 'write'),
+        (ELSE,  'else'),
+        (THEN,  'then'),
+        (GRTR,  '>'),
+        (LESS,  '<'),
+        (LPAR,  '\\('), # ( is special in regular expressions
+        (RPAR,  '\\)'), # ) is special in regular expressions        
+        (READ,  'read'),
+        (END,   'end'),
+        (SEM,   ';'),
+        (BEC,   ':='),
+        (LEQ,   '<='),
+        (NEQ,   '!='),
+        (GEQ,   '>='),
+        (ADD,   '\\+'), # + is special in regular expressions
+        (SUB,   '-'),
+        (MUL,   '\\*'), # * is special in regular expressions
+        (DIV,   '/'),
+        (NUM,   '[0-9]+'),
+        (NOT,   'not'),
+        (AND,   'and'),
+        (DO,    'do'),
+        (IF,    'if'),
+        (EQ,    '='),
+        (OR,    'or'),
+        (ID,    '[a-z]+')
+        
+        
     ]
+    
 
 class Symbol_Table:
     '''A symbol table maps identifiers to locations.'''
@@ -194,9 +178,8 @@ class Symbol_Table:
         return len(self.symbol_table)
     def location(self, identifier):
         '''Returns the location of an identifier. If the identifier is not in
-           the symbol table, it is entered with a new location. 
-           Locations are numbered sequentially starting with 0.
-        '''
+           the symbol table, it is entered with a new location. Locations are
+           numbered sequentially starting with 0.'''
         if identifier in self.symbol_table:
             return self.symbol_table[identifier]
         index = len(self.symbol_table)
@@ -285,31 +268,27 @@ class If_AST:
         return self.condition.false_code(l1) + \
                self.then.code() + \
                l1 + ':\n'
-    
+
 class If_Else_AST:
-    def __init__(self, condition, then, els):
-        self.condition = condition
+    def __init__(self, condition, then, not_then):
+        self.conditon = condition
         self.then = then
-        self.els = els
-
+        self.not_then = not_then
     def __repr__(self):
-        return 'if ' + repr(self.condition) + ' then ' + \
-                       repr(self.then) + ' else ' + repr(self.els) + ' end'
-
+        return 'if' + repr(self.conditon) + ' then ' + \
+               repr(self.then) + ' else ' + repr(self.not_then) + \
+               ' end'
     def indented(self, level):
         return indent('If-Else', level) + \
-               self.condition.indented(level + 1) + \
-               self.then.indented(level + 1) + \
-               self.els.indented(level + 1)
-
+               self.conditon.indented(level+1) + \
+               self.then.indented(level+1) + \
+               self.not_then.indented(level+1)
     def code(self):
-        l1 = label_generator.next()  # label for else
-        l2 = label_generator.next()  # label for end
-        return self.condition.false_code(l1) + \
-               self.then.code() + \
-               'goto ' + l2 + '\n' + \
-               l1 + ':\n' + \
-               self.els.code() + \
+        l1 = label_generator.next()
+        l2 = label_generator.next()
+        return self.conditon.false_code(l1) + \
+               self.then.code() + 'goto ' + l2 + '\n' + \
+               l1 + ':\n' + self.not_then.code() + \
                l2 + ':\n'
 
 class While_AST:
@@ -437,7 +416,7 @@ class Identifier_AST:
         loc = symbol_table.location(self.identifier)
         return 'iload ' + str(loc) + '\n'
 
-# The following functions comprise the recursive-descent parser.
+# The following methods comprise the recursive-descent parser.
 
 def program():
     sts = statements()
@@ -464,16 +443,6 @@ def statement():
         return read()
     else: # error
         return scanner.consume(Token.IF, Token.WHILE, Token.ID)
-    
-def write():
-    scanner.consume(Token.WRITE)
-    expr = expression()
-    return Write_AST(expr)
-
-def read():
-    scanner.consume(Token.READ)
-    ident = identifier()
-    return Read_AST(ident)
 
 def if_statement():
     scanner.consume(Token.IF)
@@ -482,12 +451,12 @@ def if_statement():
     then = statements()
     if scanner.lookahead() == Token.ELSE:
         scanner.consume(Token.ELSE)
-        els = statements()
+        not_then = statements()
         scanner.consume(Token.END)
-        return If_Else_AST(condition, els, then)
-    scanner.consume(Token.END)
-    return If_AST(condition, then)
-
+        return If_Else_AST(condition, then, not_then)
+    else:
+        scanner.consume(Token.END)
+        return If_AST(condition, then)        
 
 def while_statement():
     scanner.consume(Token.WHILE)
@@ -508,6 +477,9 @@ operator = { Token.LESS:'<', Token.EQ:'=', Token.GRTR:'>',
              Token.ADD:'+', Token.SUB:'-', Token.MUL:'*', Token.DIV:'/' }
 
 def comparison():
+    if scanner.lookahead() == Token.NOT:
+        scanner.consume(Token.NOT)
+        
     left = expression()
     op = scanner.consume(Token.LESS, Token.EQ, Token.GRTR,
                          Token.LEQ, Token.NEQ, Token.GEQ)
@@ -548,9 +520,20 @@ def identifier():
     value = scanner.consume(Token.ID)[1]
     return Identifier_AST(value)
 
+def write():
+    scanner.consume(Token.WRITE)
+    express = expression()
+    return Write_AST(express)
+
+def read():
+    scanner.consume(Token.READ)
+    iden = identifier()
+    return Read_AST(iden)
+
 # Initialise scanner, symbol table and label generator.
 
 scanner = Scanner(sys.stdin)
+# scanner = Scanner(open('program0.txt'))
 symbol_table = Symbol_Table()
 symbol_table.location('Java Scanner') # fix a location for the Java Scanner
 label_generator = Label()
@@ -588,4 +571,3 @@ if scanner.lookahead() != None:
 # It can be assembled to a class file by Jasmin: http://jasmin.sourceforge.net/
 
 print(ast.code(), end='')
-

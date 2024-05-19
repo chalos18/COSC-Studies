@@ -18,11 +18,11 @@ istore 1
 iload 1
 sipush 3
 if_icmpge l1
-sipush 0
+sipush 1
 istore 1
 goto l2
 l1:
-sipush 1
+sipush 0
 istore 1
 l2:
 return
