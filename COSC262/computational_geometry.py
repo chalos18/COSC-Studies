@@ -73,8 +73,8 @@ def is_ccw(a, b, c):
     p = b - a
     q = c - a
     area = p.x * q.y - q.x * p.y
-	 # May want to throw an exception if area == 0
-    return area > 0 
+    # May want to throw an exception if area == 0
+    return area > 0
 
 
 def is_on_segment(p, a, b):
@@ -111,23 +111,24 @@ def classify_points(line_start, line_end, points):
 
     return (right, left)
 
-def intersecting(a, b, c, d) :
-    """ Returns True if the line segment from a to b intersects the line segment from c to d. 
-    Otherwise the function returns False. 
-    The parameters a, b, c and d are all points of type Vec as defined in the lecture notes. 
+
+def intersecting(a, b, c, d):
+    """Returns True if the line segment from a to b intersects the line segment from c to d.
+    Otherwise the function returns False.
+    The parameters a, b, c and d are all points of type Vec as defined in the lecture notes.
     Coordinates are all integers.
     """
     is_intersecting = is_ccw(a, d, b) != is_ccw(a, c, b)
     different_sides = is_ccw(c, a, d) != is_ccw(c, b, d)
-    
+
     return is_intersecting and different_sides
 
 
 def is_strictly_convex(vertices):
-    """ Takes a list of three or more points, each of type Vec as in the lecture notes, and returns True if and only if the vertices, 
-    taken in the given order, define a strictly-convex counter-clockwise polygon. 
+    """Takes a list of three or more points, each of type Vec as in the lecture notes, and returns True if and only if the vertices,
+    taken in the given order, define a strictly-convex counter-clockwise polygon.
     Otherwise the function returns False.
-    While a convex polygon can have interior angles equal to 180o, a strictly-convex polygon has all interior angles strictly less than 180o. 
+    While a convex polygon can have interior angles equal to 180o, a strictly-convex polygon has all interior angles strictly less than 180o.
     """
     n = len(vertices)
     if n < 3:
@@ -137,21 +138,21 @@ def is_strictly_convex(vertices):
         a = vertices[i]
         b = vertices[(i + 1) % n]
         c = vertices[(i + 2) % n]
-        
+
         if not is_ccw(a, b, c):
             return False
 
     return True
 
-        
+
 def gift_wrap(points):
-    """ Returns points on convex hull in CCW using the Gift Wrap algorithm"""
+    """Returns points on convex hull in CCW using the Gift Wrap algorithm"""
     # Get the bottom-most point (and left-most if necessary).
     assert len(points) >= 3
     bottommost = min(points, key=lambda p: (p.y, p.x))
     hull = [bottommost]
     done = False
-    
+
     # Loop, adding one vertex at a time, until hull is (about to be) closed.
     while not done:
         candidate = None
@@ -163,7 +164,7 @@ def gift_wrap(points):
             if candidate is None or is_ccw(candidate, hull[-1], p):
                 candidate = p
         if candidate is bottommost:
-            done = True    # We've closed the hull
+            done = True  # We've closed the hull
         else:
             hull.append(candidate)
 
@@ -178,11 +179,11 @@ points = [
     Vec(50, 99),
     Vec(50, 50),
     Vec(100, 100),
-    Vec(99, 99)
-    ]
+    Vec(99, 99),
+]
 verts = gift_wrap(points)
 # for v in verts:
-    # print(v)
+# print(v)
 
 
 points = [
@@ -194,29 +195,34 @@ points = [
     Vec(100, 0),
     Vec(1, 99),
     Vec(0, 0),
-    Vec(50, 50)]
+    Vec(50, 50),
+]
 verts = gift_wrap(points)
 # for v in verts:
-    # print(v)
+# print(v)
 
 
 class PointSortKey:
     """A class for use as a key when sorting points wrt bottommost point"""
+
     def __init__(self, p, bottommost):
         """Construct an instance of the sort key"""
         self.direction = p - bottommost
         self.is_bottommost = self.direction.lensq() == 0  # True if p == bottommost
-        
+
     def __lt__(self, other):
         """Compares two sort keys. p1 < p2 means the vector the from bottommost point
-           to p2 is to the left of the vector from the bottommost to p1.
+        to p2 is to the left of the vector from the bottommost to p1.
         """
         if self.is_bottommost:
-            return True   # Ensure bottommost point is less than all other points
+            return True  # Ensure bottommost point is less than all other points
         elif other.is_bottommost:
             return False  # Ensure no other point is less than the bottommost
         else:
-            area = self.direction.x * other.direction.y - other.direction.x * self.direction.y
+            area = (
+                self.direction.x * other.direction.y
+                - other.direction.x * self.direction.y
+            )
             return area > 0
 
 
@@ -234,9 +240,9 @@ def plot_poly(points):
 
 
 def simple_polygon(points):
-    """Takes a list of points (each of type Vec) and returns a simple polygon that passes through all points. 
-    You must use the algorithm in the notes, so that the first point will be the bottom-most (and, if necessary, left-most) point 
-    and the other points follow in counter-clockwise order. 
+    """Takes a list of points (each of type Vec) and returns a simple polygon that passes through all points.
+    You must use the algorithm in the notes, so that the first point will be the bottom-most (and, if necessary, left-most) point
+    and the other points follow in counter-clockwise order.
     The return value should be a list of points of type Vec.
     """
     bottommost = min(points, key=lambda p: (p.y, p.x))
@@ -256,60 +262,36 @@ def graham_scan(points):
     return hull
 
 
-points = [
-    Vec(100, 100),
-    Vec(0, 100),
-    Vec(50, 0)]
+points = [Vec(100, 100), Vec(0, 100), Vec(50, 0)]
 verts = graham_scan(points)
 for v in verts:
     print(v)
 
 
-points = [
-    Vec(100, 100),
-    Vec(0, 100),
-    Vec(100, 0),
-    Vec(0, 0),
-    Vec(49, 50)]
+points = [Vec(100, 100), Vec(0, 100), Vec(100, 0), Vec(0, 0), Vec(49, 50)]
 verts = graham_scan(points)
 for v in verts:
     print(v)
 
 
-points = [
-    Vec(100, 100),
-    Vec(0, 100),
-    Vec(50, 0)]
+points = [Vec(100, 100), Vec(0, 100), Vec(50, 0)]
 verts = simple_polygon(points)
 # for v in verts:
-    # print(v)
+# print(v)
 
 
-points = [
-    Vec(100, 100),
-    Vec(0, 100),
-    Vec(100, 0),
-    Vec(0, 0),
-    Vec(49, 50)]
+points = [Vec(100, 100), Vec(0, 100), Vec(100, 0), Vec(0, 0), Vec(49, 50)]
 verts = simple_polygon(points)
 # for v in verts:
-    # print(v)
+# print(v)
 
 
-verts = [
-    (0, 0),
-    (100, 0),
-    (100, 100),
-    (0, 100)]
+verts = [(0, 0), (100, 0), (100, 100), (0, 100)]
 points = [Vec(v[0], v[1]) for v in verts]
 # print(is_strictly_convex(points))
 
 
-verts = [
-    (0, 0),
-    (0, 100),
-    (100, 100),
-    (100, 0)]
+verts = [(0, 0), (0, 100), (100, 100), (100, 0)]
 points = [Vec(v[0], v[1]) for v in verts]
 # print(is_strictly_convex(points))
 
@@ -378,3 +360,50 @@ point_tuples = [
 points = [Vec(p[0], p[1]) for p in point_tuples]
 # for p in points:
 #     print(p, is_on_segment(p, a, b))
+
+
+# Do not alter the next two lines
+from collections import namedtuple
+
+Node = namedtuple("Node", ["value", "left", "right"])
+
+
+# Rewrite the following function to avoid slicing
+def binary_search_tree(nums, is_sorted=False, start=0, end=None):
+    """Return a balanced binary search tree with the given nums
+    at the leaves. is_sorted is True if nums is already sorted.
+    Avoids slicing by using start and end indices.
+    """
+    if not is_sorted:
+        nums = sorted(nums)
+        is_sorted = True  # Ensure we don't sort in recursive calls
+
+    if end is None:
+        end = len(nums)
+
+    n = end - start
+    if n == 1:
+        tree = Node(nums[start], None, None)  # A leaf
+    else:
+        mid = start + n // 2  # Midpoint index
+        left = binary_search_tree(nums, is_sorted, start, mid)
+        right = binary_search_tree(nums, is_sorted, mid, end)
+        tree = Node(nums[mid - 1], left, right)
+
+    return tree
+
+
+# Leave the following function unchanged
+def print_tree(tree, level=0):
+    """Print the tree with indentation"""
+    if tree.left is None and tree.right is None:  # Leaf?
+        print(2 * level * " " + f"Leaf({tree.value})")
+    else:
+        print(2 * level * " " + f"Node({tree.value})")
+        print_tree(tree.left, level + 1)
+        print_tree(tree.right, level + 1)
+
+
+nums = [22, 41, 19, 27, 12, 35, 14, 20, 39, 10, 25, 44, 32, 21, 18]
+tree = binary_search_tree(nums)
+print_tree(tree)
