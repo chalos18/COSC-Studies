@@ -21,6 +21,7 @@ def lcs(s1, s2, cache=None):
     
     cache[s1_length][s2_length] = result
     return result
+
 # A simple test that should run without caching
 s1 = "abcde"
 s2 = "qbxxd"
