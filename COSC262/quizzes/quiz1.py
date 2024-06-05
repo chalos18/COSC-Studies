@@ -153,10 +153,10 @@ def find(data, value):
 #             return found + 1
 
 
-print(find(["hi", "there", "you", "there"], "there"))
-print(find([10, 20, 30], 0))
-print(find([10, 20, 30], 30))
-print(find(list(range(0, 51)), 49))
+# print(find(["hi", "there", "you", "there"], "there"))
+# print(find([10, 20, 30], 0))
+# print(find([10, 20, 30], 30))
+# print(find(list(range(0, 51)), 49))
 
 # def almost_all(numbers):
 #     for x in numbers:
@@ -177,6 +177,9 @@ def almost_all(numbers):
     return result
 
 
+# print(almost_all([1, 2, 3]))
+# print(almost_all(list(range(10**5))))
+
 def recursive_sum(data, start_index=0):
     """The sum of the elements in the list data, starting
     at the given start_index
@@ -185,7 +188,3 @@ def recursive_sum(data, start_index=0):
         return 0
     else:
         return data[start_index] + recursive_sum(data, start_index + 1)
-
-
-# print(almost_all([1, 2, 3]))
-# print(almost_all(list(range(10**5))))

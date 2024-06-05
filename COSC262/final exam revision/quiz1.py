@@ -148,10 +148,85 @@ def all_pairs_inner(list1, list2, index=0):
         iterator = list2[index]
         return [()] + all_pairs_inner(list1[index], list2, index + 1)
 
-def all_pairs_outer(list1, list2, index = 0):
+
+def all_pairs_outer(list1, list2, index=0):
     if index >= len(list2):
         return []
     else:
         all_pairs_inner()
 
-print(all_pairs_outer([1, 2], [10, 20, 30]))
+
+# print(all_pairs_outer([1, 2], [10, 20, 30]))
+
+
+# Write an asymptotically most efficient implementation of the function below
+def almost_all(numbers):
+    return [sum(numbers) - x for x in numbers]
+
+
+def almosssst_all(numbers):
+    num_sum = sum(numbers)
+    result = []
+    for x in numbers:
+        result.append(num_sum - x)
+    return result
+
+
+# print(almosssst_all([1, 2, 3]))
+
+
+def almost_all_efficient(numbers, index=0):
+    if index >= len(numbers):
+        return []
+    else:
+        iterator = almost_all_efficient(numbers, index + 1)
+        num_sum = sum(numbers) - numbers[index]
+        return [num_sum] + iterator
+
+
+# print(almost_all_efficient([1, 2, 3]))
+
+
+# Write an asymptotically most efficient implementation of the function below
+def foo(numbers):
+    result = []
+    for i in range(len(numbers)):
+        sub = sorted(numbers[i:])
+        result.append(sub[0])
+    return result
+
+
+# def foo_recursive(numbers, index=0):
+#     if index >= len(numbers):
+#         return []
+#     else:
+#         iterator =
+#         iterator = foo_recursive(numbers, index + 1)
+#         sub =
+#         return [sub] + iterator
+
+
+def foo_asymp(numbers):
+    n = len(numbers)
+    if n == 0:
+        return []
+
+    # Initialize the result list with the same length as numbers, filled with None
+    result = [None] * n
+
+    # Start from the rightmost element
+    min_so_far = numbers[-1]
+    result[-1] = min_so_far
+
+    # Traverse the list from the second last element to the first
+    for i in range(n - 2, -1, -1):
+        min_so_far = min(min_so_far, numbers[i])
+        result[i] = min_so_far
+
+    return result
+
+
+# print(foo_asymp([1, 4, 1, 3]))
+# print(foo_asymp([1, 2, 3, 3]))
+# print(foo_recursive([1, 2, 3, 3]))
+# foo(list(range(10**5)))
