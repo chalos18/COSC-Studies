@@ -95,4 +95,154 @@ def encodedate(day, month, year):
 
 
 # Example usage
-print(encodedate(4, 5, 2017))  # Example test
+# print(encodedate(4, 5, 2017))  # Example test
+
+
+def transmission_delay(packet_length_bytes, rate_mbps):
+    r = rate_mbps * 1000000  # Convert Mbps to bps
+    l = packet_length_bytes
+    transmission_delay = (l * 8) / r
+    delay_milliseconds = transmission_delay * 1000
+    return delay_milliseconds
+
+
+# print(f"{transmission_delay(1000 , 10):.3f}")
+
+
+def transmission_delay(packet_length_bytes, rate_mbps):
+    r = rate_mbps * 1000000000  # Convert Gbps to bps
+    l = packet_length_bytes
+    transmission_delay = (l * 8) / r
+    delay_milliseconds = transmission_delay * 1000
+    return delay_milliseconds
+
+
+# print(f"{transmission_delay(1000 , 10):.4f}")
+
+
+def total_time(cable_length_km, packet_length_b):
+    d = cable_length_km  # In km/s
+    l = packet_length_b  # In bits
+    return (l * 8) / d
+
+
+# print(f"{total_time(10000, 8000):.4f}")
+
+
+""" 
+    To calculate the total time required for a packet to be completely transmitted and received
+    over a communication cable, we need to consider both the transmission time and the 
+    propagation delay.
+
+    Transmission Time: Time taken to put all the bits of the packet onto the cable.
+        - Transmission time = Packet lenght (bits) / Data Rate (bps)
+    
+    Propagation Delay: Time taken for a bit to travel from the transmitter to the receiver.
+        - Propagation Delay = Cable Length (km) / Propagation Speed (km/s)
+    
+    Total Time = Transmission Time + Propagation Delay
+
+    Total time to milliseconds = total_time_seconds * 1000
+"""
+
+
+def total_time(cable_length_km, packet_length_b):
+    # Constants
+    propagation_speed_km_per_s = 200000  # speed of light in the cable in km/s
+    data_rate_bps = 10_000_000_000  # data rate in bits per second (10 Gbps)
+
+    # Calculate transmission time in seconds
+    transmission_time_s = packet_length_b / data_rate_bps
+
+    # Calculate propagation delay in seconds
+    propagation_delay_s = cable_length_km / propagation_speed_km_per_s
+
+    # Calculate total time in seconds
+    total_time_s = transmission_time_s + propagation_delay_s
+
+    # Convert total time to milliseconds
+    total_time_ms = total_time_s * 1000
+
+    return total_time_ms
+
+
+# Test example
+# print(f"{total_time(10000, 8000):.4f}")
+
+
+def queueing_delay(rate_bps, num_packets, packet_length_b):
+    r = rate_bps
+    n = num_packets
+    l = packet_length_b
+
+    waiting_time_s = (n * l) / r
+
+    return waiting_time_s
+
+
+# print(f"{queueing_delay(1000000, 7, 10000):.3f}")
+
+
+def queueing_delay(rate_bps, num_packets, packet_length_b):
+    r = rate_bps * 1000000  # Mbps to bps, there are 1000000 bps in one Mbps
+    n = num_packets
+    l = packet_length_b * 8  # Byte to bits, there are 8 bits in one byte
+
+    waiting_time_s = (n * l) / r
+
+    waiting_time_ms = waiting_time_s * 1000
+
+    return waiting_time_ms
+
+
+# print(f"{queueing_delay(100, 20, 1500):.2f}")
+
+
+def average_trials(p_loss):
+    probability = 1 - p_loss  # Probability of success
+    avg_trials = 1 / probability  # avg number of trials needed
+
+    return avg_trials
+
+
+# print(f"{average_trials(0.1):.2f}")
+
+
+def average_trials(p_loss):
+    """
+    - Suppose the transmitter wants to transmit 1,000 packets
+    over a channel with a packet loss probability of P = 0.2
+    - What is the average total number of packet transmission trials
+    that the transmitter has to make?
+    """
+    probability = 1 - p_loss  # Probability of success
+    avg_trials = 1000 / probability  # avg number of trials needed
+
+    return avg_trials
+
+
+# print(f"{average_trials(0.2):.2f}")
+
+
+def per_from_ber(bit_error_probability, packet_len_b):
+    p = bit_error_probability
+    l = packet_len_b
+
+    bit_error_prob = 1 - (1 - p) ** l
+    return bit_error_prob
+
+
+# print(f"{per_from_ber(0.0001, 1000):.3f}")
+
+
+def avg_trials_from_ber(bit_error_probability, packet_length_b):
+    p = bit_error_probability
+    l = packet_length_b
+
+    bit_error_prob = (1 - p) ** l
+    avg_trials = 1 / bit_error_prob  # avg number of trials needed
+
+    return avg_trials
+
+
+print(f"{avg_trials_from_ber(0.001, 2000):.3f}")
