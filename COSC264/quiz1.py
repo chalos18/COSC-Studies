@@ -245,4 +245,4 @@ def avg_trials_from_ber(bit_error_probability, packet_length_b):
     return avg_trials
 
 
-print(f"{avg_trials_from_ber(0.001, 2000):.3f}")
+# print(f"{avg_trials_from_ber(0.001, 2000):.3f}")
