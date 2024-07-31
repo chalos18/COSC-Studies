@@ -83,6 +83,55 @@ def total_number_bits(
     return total_bits
 
 
-print(f"{total_number_bits(1000, 100, 10000):.0f}")
+# print(f"{total_number_bits(1000, 100, 10000):.0f}")
+# print(f"{total_number_bits(1000, 100, 10001):.0f}")
 
-print(f"{total_number_bits(1000, 100, 10001):.0f}")
+
+def packet_transfer_time(
+    link_length_km,
+    light_speed_kmps,
+    processing_delay_s,
+    data_rate_bps,
+    max_user_data_per_packet_b,
+    overhead_per_packet_b,
+):
+    d = link_length_km
+    c = light_speed_kmps
+    p = processing_delay_s
+    r = data_rate_bps
+    s = max_user_data_per_packet_b
+    o = overhead_per_packet_b
+
+    propagation_delay = d / c
+    transmission_delay = (s + o) / r
+    processing_delay = p
+
+    total_transfer_time = 2 * (propagation_delay + transmission_delay + processing_delay)
+
+    return total_transfer_time
+
+
+# print(f"{packet_transfer_time(10000, 200000, 0.001, 1000000, 1000, 100):.4f}")
+
+
+def total_transfer_time(
+    link_length_km,
+    light_speed_kmps,
+    processing_delay_s,
+    data_rate_bps,
+    max_user_data_per_packet_b,
+    overhead_per_packet_b,
+    message_length_b,
+):
+    d = link_length_km
+    c = light_speed_kmps
+    p = processing_delay_s
+    r = data_rate_bps
+    s = max_user_data_per_packet_b
+    o = overhead_per_packet_b
+    m = message_length_b
+
+    
+
+
+print(f"{total_transfer_time(20000, 200000, 0.001, 1000000, 1000, 100, 5000):.4f}")
