@@ -106,7 +106,9 @@ def packet_transfer_time(
     transmission_delay = (s + o) / r
     processing_delay = p
 
-    total_transfer_time = 2 * (propagation_delay + transmission_delay + processing_delay)
+    total_transfer_time = 2 * (
+        propagation_delay + transmission_delay + processing_delay
+    )
 
     return total_transfer_time
 
@@ -131,7 +133,24 @@ def total_transfer_time(
     o = overhead_per_packet_b
     m = message_length_b
 
-    
+    num_packets = m // s
+
+    # Calculate individual delays
+    propagation_delay = d / c
+    transmission_delay = (s + o) / r
+
+    # Total transfer time considering pipelining
+    total_time = (
+        2 * propagation_delay
+        + transmission_delay
+        + p
+        + (transmission_delay) * (num_packets)
+        + p
+    )
+
+    return total_time
 
 
-print(f"{total_transfer_time(20000, 200000, 0.001, 1000000, 1000, 100, 5000):.4f}")
+# Once you've worked that out, you should be able to use that, plus your answer
+# to a previous question and your calculation for the total number of packets, to solve Question 9.
+# print(f"{total_transfer_time(20000, 200000, 0.001, 1000000, 1000, 100, 5000):.4f}")
