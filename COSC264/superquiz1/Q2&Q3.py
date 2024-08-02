@@ -95,22 +95,41 @@ empty_checksum_header = bytearray(
 
 
 def basic_packet_check(packet):
-    """Takes a single bytearray parameter (representing an IPv4 packet)
-    and returns True if it passes all the basic correctness checks.
-    Raises an appropriate ValueError if any of the correctness checks fail.
+    """Performs basic correctness checks on an IPv4 packet.
+    Returns True if all checks pass.
+    Raises ValueError with a specific message if any check fails.
     """
-
-    packet_len = len(packet)
-    if packet_len < 20:
+    if len(packet) < 20:
         raise ValueError("Packet does not contain a full IP header")
 
-    for i in range(0, packet_len):
-        # Extract 16-bit integer from the header
-        # Big-endian: higher byte first
-        byte1 = packet[i]  # First byte of the 16-bit number
-        version_number = byte1 << 4
+    # first 4 bits of the first byte
+    version = packet[0] >> 4
+    if version != 4:
+        raise ValueError("Packet version number must equal 4")
 
-    print(version_number)
+    # last 4 bits of the first byte
+    hdr_len = packet[0] & 0x0F
+    if hdr_len < 5:
+        raise ValueError("Packet hdrlen field must be at least 5")
+
+    # Note that the header length field 
+    # gives the length of the IPv4 header in multiples of 32 bits (4 bytes)
+    header_length = hdr_len * 4
+    if len(packet) < header_length:
+        raise ValueError("Packet length is less than the specified header length")
+
+    header = packet[:header_length]
+    if checksum(header) != 0:
+        raise ValueError("Packet checksum failed")
+
+    # (bytes 2 and 3)
+    total_length = (packet[2] << 8) | packet[3]
+    if total_length != len(packet):
+        raise ValueError(
+            "Packet totallength field is inconsistent with the packet length"
+        )
+
+    return True
 
 
 pkt1 = bytearray(
@@ -183,7 +202,7 @@ pkt2 = bytearray(
         0x6,
     ]
 )
-# print(basic_packet_check(pkt2))
+print(basic_packet_check(pkt2))
 
 pkt3 = bytearray(
     [
@@ -216,4 +235,4 @@ pkt3 = bytearray(
         0x05,
     ]
 )
-# print(basic_packet_check(pkt3))
+print(basic_packet_check(pkt3))
