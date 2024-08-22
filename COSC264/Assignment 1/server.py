@@ -5,7 +5,8 @@ import socket
 
 # constants
 MAGIC_NO = 0x36FB
-RESPONSE_PACKET_TYPE = 0x0001
+
+RESPONSE_PACKET_TYPE = 0x0002
 
 VALID_REQUEST_TYPES = {0x0001, 0x0002}
 
@@ -14,12 +15,6 @@ TE_REO_MAORI = 0x0002
 GERMAN = 0x0003
 LANGUAGE_CODES = {ENGLISH: "English", TE_REO_MAORI: "Māori", GERMAN: "German"}
 
-NOW = datetime.now()
-YEAR = NOW.year
-MONTH = NOW.month
-DAY = NOW.day
-HOUR = NOW.hour
-MINUTE = NOW.minute
 
 # helper functions or classes
 MONTH_NAMES = {
@@ -72,23 +67,25 @@ def get_month(month, language):
     return MONTH_NAMES[language][month - 1]
 
 
-def textual_representation_generation(language_code, request_type):
-    hour_str = f"{HOUR:02d}"
-    minute_str = f"{MINUTE:02d}"
+def textual_representation_generation(
+    language_code, request_type, year, month, day, hour, minute
+):
+    hour_str = f"{hour:02d}"
+    minute_str = f"{minute:02d}"
 
     if language_code == ENGLISH:
         if request_type == "date":
-            return f"Today's date is {get_month(MONTH, 'English')} {DAY}, {YEAR}"
+            return f"Today's date is {get_month(month, 'English')} {day}, {year}"
         elif request_type == "time":
             return f"The current time is {hour_str}:{minute_str}"
     elif language_code == TE_REO_MAORI:
         if request_type == "date":
-            return f"Ko te rā o tēnei rā ko {get_month(MONTH, 'Te Reo Māori')} {DAY}, {YEAR}"
+            return f"Ko te rā o tēnei rā ko {get_month(month, 'Te Reo Māori')} {day}, {year}"
         elif request_type == "time":
             return f"Ko te wā o tēnei wā {hour_str}:{minute_str}"
     elif language_code == GERMAN:
         if request_type == "date":
-            return f"Heute ist der {DAY}. {get_month(MONTH, 'German')} {YEAR}"
+            return f"Heute ist der {day}. {get_month(month, 'German')} {year}"
         elif request_type == "time":
             return f"Die Uhrzeit ist {hour_str}:{minute_str}"
 
@@ -97,22 +94,22 @@ def client_data_validation_check(data):
     # Upon receiving a packet, the server must check:
     if len(data) != 6:
         print("ERROR: Packet length incorrect for a DT_Request, dropping packet")
-        return
+        return None
 
     magic_no = (data[0] << 8) | data[1]
     if magic_no != MAGIC_NO:
         print("ERROR: Packet magic number is incorrect, dropping packet")
-        return
+        return None
 
     packet_type = (data[2] << 8) | data[3]
     if packet_type != 0x0001:
         print("ERROR: Packet is not a DT_Request, dropping packet")
-        return
+        return None
 
     request_type = (data[4] << 8) | data[5]
-    if request_type not in (0x0001, 0x0002):
+    if request_type not in VALID_REQUEST_TYPES:
         print("ERROR: Packet has invalid type, dropping packet")
-        return
+        return None
 
     return "date" if request_type == 0x0001 else "time"
 
@@ -121,18 +118,23 @@ def create_dt_response(language_code, request_type):
     """
     Prepares a DT-Response packet
     """
-    if language_code == ENGLISH:
-        text = textual_representation_generation(language_code, request_type)
-    elif language_code == TE_REO_MAORI:
-        text = textual_representation_generation(language_code, request_type)
-    elif language_code == GERMAN:
-        text = textual_representation_generation(language_code, request_type)
+
+    now = datetime.now()
+    year = now.year
+    month = now.month
+    day = now.day
+    hour = now.hour
+    minute = now.minute
+
+    text = textual_representation_generation(
+        language_code, request_type, year, month, day, hour, minute
+    )
 
     text_bytes = text.encode("utf-8")
     text_length = len(text_bytes)
     if text_length > 255:
         print("ERROR: Text too long, dropping packet")
-        return
+        return None
 
     # prepare a response message resp if all conditions are met
     # returns both the date and current time of day in a binary representation,
@@ -144,28 +146,35 @@ def create_dt_response(language_code, request_type):
     dt_response[1] = MAGIC_NO & 0xFF
 
     # 16-bit field PacketType indicates the packet type within our DateTime protocol
-    dt_response[2] = (0x0002 >> 8) & 0xFF
-    dt_response[3] = 0x0002 & 0xFF
+    dt_response[2] = (RESPONSE_PACKET_TYPE >> 8) & 0xFF
+    dt_response[3] = RESPONSE_PACKET_TYPE & 0xFF
 
     # LanguageCode indicates the language used for textual representation
     dt_response[4] = (language_code >> 8) & 0xFF
     dt_response[5] = language_code & 0xFF
 
     # 16-bit field Year contains the value for the year as a non-negative integer
-    dt_response[6] = (YEAR >> 8) & 0xFF
-    dt_response[7] = YEAR & 0xFF
+    dt_response[6] = (year >> 8) & 0xFF
+    dt_response[7] = year & 0xFF
     # 8-bit field Month contains the value for the month as a non-negative integer
-    dt_response[8] = MONTH
+    dt_response[8] = month
     # 8-bit field Day contains the value for the day of the month as a non-negative integer
-    dt_response[9] = DAY
+    dt_response[9] = day
     # 8-bit field Hour contains the hour of the day in 24-hour format. This number is allowed to range from 0 to 23
-    dt_response[10] = HOUR
+    dt_response[10] = hour
     # 8-bit field Minute contains the minute within the hour. This number is allowed to range from 0 to 59
-    dt_response[11] = MINUTE
+    dt_response[11] = minute
     # 8-bit field Length indicates the length of the textual representation in bytes
+
     dt_response[12] = text_length
+    # print(f"Text Length: {text_length}")
     # Text field
     dt_response[13:] = text_bytes
+
+    # dt_response_hex = dt_response.hex()
+    # print(f"Response packet (hex): {dt_response_hex}")
+    # packet_bytes = bytes.fromhex(dt_response_hex)
+    # print(packet_bytes)
 
     return dt_response
 
@@ -175,8 +184,8 @@ def socket_creation():
         s_english = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s_maori = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s_german = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    except Exception as e:
-        print(f"ERROR: Socket creation failed - {e}")
+    except socket.error:
+        print(f"ERROR: Socket creation failed")
         sys.exit(1)
 
     return s_english, s_maori, s_german
@@ -195,8 +204,8 @@ def socket_binding(ports, s_english, s_maori, s_german):
         print(f"Binding German to port {ports[2]}")
         s_german.bind((host, ports[2]))
 
-    except socket.error as e:
-        print(f"ERROR: Socket binding failed - {e}")
+    except socket.error:
+        print(f"ERROR: Socket binding failed")
         # Close sockets if they were created before the error
         for socket in (s_english, s_maori, s_german):
             if socket:
@@ -204,28 +213,82 @@ def socket_binding(ports, s_english, s_maori, s_german):
         sys.exit(1)
 
 
+def socket_creation(ports, s_english, s_maori, s_german):
+    # Define the ports and language labels
+    ports = [s_english, s_maori, s_german]  # Example port numbers, adjust as needed
+    languages = ["English", "Māori", "German"]
+
+    # Create a list to hold socket references
+    sockets = []
+
+    # Iterate over ports and languages to create and bind sockets
+    for i in range(3):
+        language = languages[i]
+        port = ports[i]
+
+        # Print status message before socket creation and binding
+        print(f"Binding {language} to port {port}")
+
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sockets.append(s)
+        except socket.error:
+            print("ERROR: Socket creation failed")
+            for sock in sockets:
+                sock.close()
+            sys.exit(1)
+
+        try:
+            # Bind the socket
+            s.bind(("localhost", port))
+        except socket.error:
+            print("ERROR: Socket binding failed")
+            for sock in sockets:
+                sock.close()
+            sys.exit(1)
+
+    return sockets
+
+# def receiving_data(s):
+#     try:
+#         data, address = s.recvfrom(4096)
+#     except socket.timeout:
+#         print("ERROR: Receiving timed out, dropping packet")
+#         return None
+#     except socket.error:
+#         print(f"ERROR: Receiving failed, dropping packet")
+#         return None
+#     return data,address
+
 def socket_validation(sockets, readable):
     for s in readable:
-        data, address = s.recvfrom(4096)
+        try:
+            data, address = s.recvfrom(4096)
+        except socket.timeout:
+            print("ERROR: Receiving timed out, dropping packet")
+            print("Waiting for requests...")
+            return
+        except socket.error:
+            print(f"ERROR: Receiving failed, dropping packet")
+            print("Waiting for requests...")
+            return
+
         request_type = client_data_validation_check(data)
         if request_type is None:
+            print("Waiting for requests...")
             continue
 
         print(
             f"{LANGUAGE_CODES[sockets[s]]} received {request_type} request from {address[0]}"
         )
 
+        response = create_dt_response(sockets[s], request_type)
         try:
-            response = create_dt_response(sockets[s], request_type)
             if response:
                 s.sendto(response, address)
                 print("Response sent")
-        except socket.timeout:
-            print("ERROR: Receiving timed out, dropping packet")
-            return
         except socket.error:
-            print(f"ERROR: Receiving failed, dropping packet")
-            return
+            print("ERROR: Sending failed, dropping packet")
 
         print("Waiting for requests...")
 
@@ -271,10 +334,13 @@ def main():
                 sys.exit(1)
 
         # Create sockets for UDP
-        s_english, s_maori, s_german = socket_creation()
+        socket_list = socket_creation(
+            ports, english_port, te_reo_maori_port, german_port
+        )
 
-        # Bind sockets for UDP
-        socket_binding(ports, s_english, s_maori, s_german)
+        s_english = socket_list[0]
+        s_maori = socket_list[1]
+        s_german = socket_list[2]
 
         print("Waiting for requests...")
 
