@@ -1,3 +1,5 @@
+import math
+
 def connection_setup_delay(
     cable_length_km,
     light_speed_kmps,
@@ -85,6 +87,13 @@ def total_number_bits(
 
 # print(f"{total_number_bits(1000, 100, 10000):.0f}")
 # print(f"{total_number_bits(1000, 100, 10001):.0f}")
+
+def num_of_bits(num_of_vlevels):
+    return math.floor(math.log2(num_of_vlevels))
+
+# print(num_of_bits(7))
+# print(num_of_bits(8))
+# print(num_of_bits(9))
 
 
 def packet_transfer_time(

@@ -36,8 +36,25 @@ def last_fragment_size(
     return last_fragment_size
 
 
-print(last_fragment_size(10000, 100, 1000))
-# 200
-print(last_fragment_size(160, 20, 100))
-# 100
-print(last_fragment_size(20, 20, 1500))
+# print(last_fragment_size(10000, 100, 1000))
+# # 200
+# print(last_fragment_size(160, 20, 100))
+# # 100
+# print(last_fragment_size(20, 20, 1500))
+
+
+def fragment_offsets(fragment_size_bytes, overhead_size_bytes, message_size_bytes):
+    # Calculate the payload size per fragment
+    payload_size = fragment_size_bytes - overhead_size_bytes
+
+    # Initialize the list of offsets
+    offsets = []
+
+    # Generate the offsets
+    for offset in range(0, message_size_bytes, payload_size):
+        offsets.append(offset)
+
+    return offsets
+
+
+print(fragment_offsets(1500, 40, 3000) == [0, 1460, 2920])
