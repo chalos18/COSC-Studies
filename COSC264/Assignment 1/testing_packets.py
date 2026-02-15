@@ -1,8 +1,0 @@
-packet_hex = "36fb0002000307e0030817031b4865757465206973742064657220382e204dc3a4727a2032303136"
-packet_bytes= bytes.fromhex(packet_hex)
-
-print(packet_bytes)
-packet_hex = "36fb0002000307e808120f371d486575746520697374206465722031382e204175677573742032303234"
-packet_bytes = bytes.fromhex(packet_hex)
-
-print(packet_bytes)

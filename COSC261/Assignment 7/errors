@@ -1,6 +1,0 @@
-Traceback (most recent call last):
-  File "/home/anaoliveira/workspace/COSC-Studies/COSC261/Assignment 7/scanner.py", line 144, in <module>
-    token, value = scanner.consume(token)
-  File "/home/anaoliveira/workspace/COSC-Studies/COSC261/Assignment 7/scanner.py", line 83, in consume
-    raise Exception('consume not implemented')
-Exception: consume not implemented
