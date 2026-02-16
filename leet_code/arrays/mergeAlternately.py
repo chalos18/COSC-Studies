@@ -1,3 +1,4 @@
+# Neetcode
 def mergeAlternately(word1, word2):
     """
     :type word1: str
@@ -17,20 +18,3 @@ def mergeAlternately(word1, word2):
     merged_list.append(word2[j:])
     # print(merged_list)
     return "".join(merged_list)
-
-
-# word1 = "abc"
-# word2 = "pqr"
-
-word1 = "ab"
-word2 = "pqrs"
-
-# word1 = "abcd"
-# word2 = "pq"
-
-# result = mergeAlternately(word1, word2)
-# print(result)
-
-# assert result == "apbqcr"
-# assert result == "apbqrs"
-# assert result == "apbqcd"
